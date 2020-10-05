@@ -154,7 +154,7 @@ class PolicyHolderUser(core_models.UUIDVersionedModel):
     id = models.AutoField(db_column='PolicyHolderInsureeId', primary_key=True)
     uuid = models.CharField(db_column='PolicyHolderInsureeUUID', max_length=24, default=uuid.uuid4, unique=True)
 
-    user = models.ForeignKey(InteractiveUser, db_column='ContribuiotnPlanBundleId',
+    user = models.ForeignKey(core_models.InteractiveUser, db_column='UserUUID',
                                                  on_delete=models.deletion.DO_NOTHING)
 
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
