@@ -1,5 +1,6 @@
 import uuid
 
+from core.models import InteractiveUser
 from django.conf import settings
 from django.db import models
 from core import models as core_models, fields
@@ -38,11 +39,11 @@ class PolicyHolder(core_models.UUIDVersionedModel):
     payment_reference = models.CharField(db_column='PaymentReference', max_length=255)
 
     date_created = fields.DateTimeField(db_column="DateCreated")
-    date_update = fields.DateTimeField(db_column="DateUpdate")
+    date_updated = fields.DateTimeField(db_column="DateUpdated")
 
-    user_update = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdateUUID",related_name="%(class)s_UpdateUUID",
+    user_updated = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdatedUUID",related_name="%(class)s_UpdatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
-    user_create = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreateUUID",related_name="%(class)s_CreateUUID",
+    user_created = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreatedUUID",related_name="%(class)s_CreatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
 
     date_valid_from = fields.DateTimeField(db_column="DateValidFrom")
@@ -85,11 +86,11 @@ class PolicyHolderInsuree(core_models.UUIDVersionedModel):
     json_ext = FallbackJSONField(db_column='JsonExt', blank=True, null=True)
 
     date_created = fields.DateTimeField(db_column="DateCreated")
-    date_update = fields.DateTimeField(db_column="DateUpdate")
+    date_updated = fields.DateTimeField(db_column="DateUpdated")
 
-    user_update = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdateUUID",related_name="%(class)s_UpdateUUID",
+    user_updated = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdatedUUID",related_name="%(class)s_UpdatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
-    user_create = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreateUUID",related_name="%(class)s_CreateUUID",
+    user_created = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreatedUUID",related_name="%(class)s_CreatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
 
     @classmethod
@@ -121,11 +122,11 @@ class PolicyHolderContributionPlan(core_models.UUIDVersionedModel):
     json_ext = FallbackJSONField(db_column='JsonExt', blank=True, null=True)
 
     date_created = fields.DateTimeField(db_column="DateCreated")
-    date_update = fields.DateTimeField(db_column="DateUpdate")
+    date_updated = fields.DateTimeField(db_column="DateUpdated")
 
-    user_update = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdateUUID",related_name="%(class)s_UpdateUUID",
+    user_updated = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdatedUUID",related_name="%(class)s_UpdatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
-    user_create = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreateUUID",related_name="%(class)s_CreateUUID",
+    user_created = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreatedUUID",related_name="%(class)s_CreatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
 
     date_valid_from = fields.DateTimeField(db_column="DateValidFrom")
@@ -153,8 +154,8 @@ class PolicyHolderUser(core_models.UUIDVersionedModel):
     id = models.AutoField(db_column='PolicyHolderInsureeId', primary_key=True)
     uuid = models.CharField(db_column='PolicyHolderInsureeUUID', max_length=24, default=uuid.uuid4, unique=True)
 
-    # user = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
-    #                                              on_delete=models.deletion.DO_NOTHING)
+    user = models.ForeignKey(InteractiveUser, db_column='ContribuiotnPlanBundleId',
+                                                 on_delete=models.deletion.DO_NOTHING)
 
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
@@ -162,11 +163,11 @@ class PolicyHolderUser(core_models.UUIDVersionedModel):
     json_ext = FallbackJSONField(db_column='JsonExt', blank=True, null=True)
 
     date_created = fields.DateTimeField(db_column="DateCreated")
-    date_update = fields.DateTimeField(db_column="DateUpdate")
+    date_updated = fields.DateTimeField(db_column="DateUpdated")
 
-    user_update = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdateUUID",related_name="%(class)s_UpdateUUID",
+    user_updated = models.ForeignKey(core_models.InteractiveUser, db_column="UserUpdatedUUID",related_name="%(class)s_UpdatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
-    user_create = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreateUUID",related_name="%(class)s_CreateUUID",
+    user_created = models.ForeignKey(core_models.InteractiveUser, db_column="UserCreatedUUID",related_name="%(class)s_CreatedUUID",
                                     on_delete=models.deletion.DO_NOTHING)
 
     date_valid_from = fields.DateTimeField(db_column="DateValidFrom")
