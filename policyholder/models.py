@@ -1,6 +1,6 @@
 import uuid
 
-from core.models import InteractiveUser
+from contribution_plan.models import ContributionPlanBundle
 from django.conf import settings
 from django.db import models
 from core import models as core_models, fields
@@ -66,7 +66,6 @@ class PolicyHolder(core_models.UUIDVersionedModel):
         return queryset
 
     class Meta:
-        managed = False
         db_table = 'tblPolicyHolder'
 
 
@@ -79,9 +78,9 @@ class PolicyHolderInsuree(core_models.UUIDVersionedModel):
                                       on_delete=models.deletion.DO_NOTHING)
     insuree = models.ForeignKey(Insuree, db_column='InsureeId',
                                 on_delete=models.deletion.DO_NOTHING)
-    # Contribution Plan Bundle model not yet implemented
-    # contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
-    #                                              on_delete=models.deletion.DO_NOTHING)
+
+    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
+                                                 on_delete=models.deletion.DO_NOTHING)
     last_policy = models.ForeignKey(Policy, db_column='LastPolicyId', on_delete=models.deletion.DO_NOTHING)
     json_ext = FallbackJSONField(db_column='JsonExt', blank=True, null=True)
 
@@ -116,8 +115,8 @@ class PolicyHolderContributionPlan(core_models.UUIDVersionedModel):
 
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
-    # contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
-    #                                              on_delete=models.deletion.DO_NOTHING)
+    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
+                                                 on_delete=models.deletion.DO_NOTHING)
 
     json_ext = FallbackJSONField(db_column='JsonExt', blank=True, null=True)
 
@@ -146,7 +145,6 @@ class PolicyHolderContributionPlan(core_models.UUIDVersionedModel):
         return queryset
 
     class Meta:
-        managed = False
         db_table = 'tblPolicyHolderContributionPlan'
 
 
@@ -187,5 +185,4 @@ class PolicyHolderUser(core_models.UUIDVersionedModel):
         return queryset
 
     class Meta:
-        managed = False
         db_table = 'tblPolicyHolderContributionPlan'
