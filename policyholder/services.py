@@ -16,12 +16,19 @@ class PolicyHolder(object):
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
-    @transaction.atomic
-    def replace_policy_holder(self):
+    def create(self, policy_holder):
         pass
 
-    @transaction.atomic
-    def remove_policy_holder(self):
+    def update(self, policy_holder):
+        pass
+
+    def delete(self, policy_holder):
+        pass
+
+    def replace_policy_holder(self, policy_holder):
+        pass
+
+    def remove_policy_holder(self, policy_holder):
         pass
 
 
@@ -39,6 +46,9 @@ class PolicyHolderInsuree(object):
         pass
 
     def update(self, insuree):
+        pass
+
+    def delete(self, insuree):
         pass
 
     def replace_policy_holder_insuree(self, insuree):
@@ -62,6 +72,9 @@ class PolicyHolderContributionPlan(object):
         pass
 
     def update(self, contribution_plan):
+        pass
+
+    def delete(self, contribution_plan):
         pass
 
     def replace_plan(self, contribution_plan):
