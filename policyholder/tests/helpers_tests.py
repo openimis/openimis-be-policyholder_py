@@ -88,15 +88,15 @@ class HelpersTest(TestCase):
 
     def __create_test_policy_holder(self, custom=False):
         custom_params = self.__custom_policy_holder_params if custom else {}
-        return self.__create_test_instance(create_test_policy_holder, custom_parameters=custom_params)
+        return self.__create_test_instance(create_test_policy_holder, custom_props=custom_params)
 
     def __create_test_policy_holder_insuree(self, custom=False):
         custom_params = self.__custom_policy_holder_insuree_params if custom else {}
-        return self.__create_test_instance(create_test_policy_holder_insuree, custom_parameters=custom_params)
+        return self.__create_test_instance(create_test_policy_holder_insuree, custom_props=custom_params)
 
     def __create_test_policy_holder_user(self, custom=False):
         custom_params = self.__custom_policy_holder_user_params if custom else {}
-        return self.__create_test_instance(create_test_policy_holder_user, custom_parameters=custom_params)
+        return self.__create_test_instance(create_test_policy_holder_user, custom_props=custom_params)
 
 
 
