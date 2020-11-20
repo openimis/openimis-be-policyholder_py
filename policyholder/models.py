@@ -118,6 +118,15 @@ class PolicyHolderInsuree(core_models.UUIDVersionedModel):
         db_table = 'tblPolicyHolderInsuree'
 
 
+class PolicyHolderContributionPlanManager(models.Manager):
+    def filter(self, *args, **kwargs):
+        keys = [x for x in kwargs if "itemsvc" in x]
+        for key in keys:
+            new_key = key.replace("itemsvc", self.model.model_prefix)
+            kwargs[new_key] = kwargs.pop(key)
+        return super(PolicyHolderContributionPlanManager, self).filter(*args, **kwargs)
+
+
 class PolicyHolderContributionPlan(core_models.UUIDVersionedModel):
     id = models.AutoField(db_column='PolicyHolderContributionPlanId', primary_key=True)
     uuid = models.CharField(db_column='PolicyHolderContributionPlanUUID', max_length=36, default=uuid.uuid4, unique=True)
@@ -142,6 +151,8 @@ class PolicyHolderContributionPlan(core_models.UUIDVersionedModel):
     date_valid_to = fields.DateTimeField(db_column="DateValidTo", null=True)
 
     active = models.BooleanField(db_column='Active')
+
+    objects = PolicyHolderContributionPlanManager()
 
     @classmethod
     def get_queryset(cls, queryset, user):
