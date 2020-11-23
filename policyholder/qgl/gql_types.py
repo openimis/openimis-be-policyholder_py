@@ -15,7 +15,7 @@ class PolicyHolderGQLType(DjangoObjectType):
         exclude_fields = ('row_id',)
         interfaces = (graphene.relay.Node,)
         filter_fields = {
-            "uuid": ["exact"],
+            "id": ["exact"],
             "code": ["exact", "istartswith", "icontains", "iexact"],
             "version": ["exact"],
             "trade_name": ["exact", "istartswith", "icontains", "iexact"],
@@ -32,7 +32,7 @@ class PolicyHolderGQLType(DjangoObjectType):
             "date_updated": ["exact", "lt", "lte", "gt", "gte"],
             "date_valid_from": ["exact", "lt", "lte", "gt", "gte"],
             "date_valid_to": ["exact", "lt", "lte", "gt", "gte"],
-            "active": ["exact"]
+            "is_deleted": ["exact"]
         }
 
         connection_class = ExtendedConnection
@@ -49,7 +49,7 @@ class PolicyHolderInsureeGQLType(DjangoObjectType):
         exclude_fields = ('row_id',)
         interfaces = (graphene.relay.Node,)
         filter_fields = {
-            "uuid": ["exact"],
+            "id": ["exact"],
             "version": ["exact"],
             **prefix_filterset("policy_holder__", PolicyHolderGQLType._meta.filter_fields),
             **prefix_filterset("insuree__", InsureeGQLType._meta.filter_fields),
@@ -75,7 +75,7 @@ class PolicyHolderContributionPlanGQLType(DjangoObjectType):
         exclude_fields = ('row_id',)
         interfaces = (graphene.relay.Node,)
         filter_fields = {
-            "uuid": ["exact"],
+            "id": ["exact"],
             "version": ["exact"],
 
             **prefix_filterset("policy_holder__", PolicyHolderGQLType._meta.filter_fields),
@@ -87,7 +87,7 @@ class PolicyHolderContributionPlanGQLType(DjangoObjectType):
             "user_updated": ["exact"],
             "date_valid_from": ["exact", "lt", "lte", "gt", "gte"],
             "date_valid_to": ["exact", "lt", "lte", "gt", "gte"],
-            "active": ["exact"],
+            "is_deleted": ["exact"],
         }
 
         connection_class = ExtendedConnection
@@ -104,7 +104,7 @@ class PolicyHolderUserGQLType(DjangoObjectType):
         exclude_fields = ('row_id',)
         interfaces = (graphene.relay.Node,)
         filter_fields = {
-            "uuid": ["exact"],
+            "id": ["exact"],
             "user": ["exact"],
             **prefix_filterset("policy_holder__", PolicyHolderGQLType._meta.filter_fields),
 
@@ -114,7 +114,7 @@ class PolicyHolderUserGQLType(DjangoObjectType):
             "user_updated": ["exact"],
             "date_valid_from": ["exact", "lt", "lte", "gt", "gte"],
             "date_valid_to": ["exact", "lt", "lte", "gt", "gte"],
-            "active": ["exact"],
+            "is_deleted": ["exact"],
         }
 
         connection_class = ExtendedConnection
