@@ -148,3 +148,91 @@ class BaseDeleteMutationMixin:
             cls._object_not_exist_exception(uuid)
         else:
             object_to_delete.delete_history()
+
+
+class BaseHistoryModelCreateMutationMixin:
+
+    @property
+    def _model(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        if type(user) is AnonymousUser or not user.id:
+            raise ValidationError("mutation.authentication_required")
+
+    @classmethod
+    def _mutate(cls, user, **data):
+        if "client_mutation_id" in data:
+            data.pop('client_mutation_id')
+        if "client_mutation_label" in data:
+            data.pop('client_mutation_label')
+        cls.create_object(user=user, object_data=data)
+
+    @classmethod
+    def create_object(cls, user, object_data):
+        obj = cls._model.objects.create(**object_data)
+        obj.save(username=user.username)
+        return obj
+
+
+class BaseHistoryModelUpdateMutationMixin:
+
+    @property
+    def _model(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _object_not_exist_exception(cls, obj_uuid):
+        raise ObjectNotExistException(cls._model, obj_uuid)
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        if type(user) is AnonymousUser or not user.id:
+            raise ValidationError("mutation.authentication_required")
+        obj_uuid = data['id']
+        if cls._model.objects.filter(id=data['id']).first() is None:
+            cls._object_not_exist_exception(obj_uuid=obj_uuid)
+
+    @classmethod
+    def _mutate(cls, user, **data):
+        if "client_mutation_id" in data:
+            data.pop('client_mutation_id')
+        if "client_mutation_label" in data:
+            data.pop('client_mutation_label')
+        updated_object = cls._model.objects.filter(id=data['id']).first()
+        [setattr(updated_object, key, data[key]) for key in data]
+        cls.update_object(user=user, object_to_update=updated_object)
+
+    @classmethod
+    def update_object(cls, user, object_to_update):
+        object_to_update.save(user.username)
+        return object_to_update
+
+
+class BaseHistoryModelDeleteMutationMixin:
+    @property
+    def _model(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _object_not_exist_exception(cls, obj_uuid):
+        raise ObjectNotExistException(cls._model, obj_uuid)
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        cls._validate_user(user)
+
+    @classmethod
+    def _validate_user(cls, user):
+        if type(user) is AnonymousUser or not user.id:
+            raise ValidationError("mutation.authentication_required")
+
+    @classmethod
+    def _mutate(cls, user, id):
+        object_to_delete = cls._model.objects.filter(id=id).first()
+
+        if object_to_delete is None:
+            cls._object_not_exist_exception(id)
+        else:
+            object_to_delete.delete(user.username)

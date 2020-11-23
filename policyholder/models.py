@@ -21,18 +21,19 @@ class PolicyHolderManager(models.Manager):
 
 
 class PolicyHolder(core_models.HistoryBusinessModel):
-    code = models.CharField(db_column='PolicyHolderCode', max_length=32, blank=True, null=True)
+    code = models.CharField(db_column='PolicyHolderCode', max_length=32)
     trade_name = models.CharField(db_column='TradeName', max_length=255)
     locations_uuid = models.ManyToManyField(Location, verbose_name="LocationsUUID", blank=True)
-    address = models.CharField(db_column='Address', max_length=255)
-    phone = models.CharField(db_column='Phone', max_length=16)
-    fax = models.CharField(db_column='Fax', max_length=16)
-    email = models.CharField(db_column='Email', max_length=255)
-    contact_name = models.CharField(db_column='ContractName', max_length=255)
+    address = FallbackJSONField(db_column='Address', blank=True, null=True)
+    phone = models.CharField(db_column='Phone', max_length=16, blank=True, null=True)
+    fax = models.CharField(db_column='Fax', max_length=16, blank=True, null=True)
+    email = models.CharField(db_column='Email', max_length=255, blank=True, null=True)
+    contact_name = FallbackJSONField(db_column='ContractName', max_length=255, blank=True, null=True)
     legal_form = models.IntegerField(db_column='LegalForm')
     activity_code = models.IntegerField(db_column='ActivityCode')
-    accountancy_account = models.CharField(db_column='AccountancyAccount', max_length=255)
-    payment_reference = models.CharField(db_column='PaymentReference', max_length=255)
+    accountancy_account = models.CharField(db_column='AccountancyAccount', max_length=64, blank=True, null=True)
+    bank_account = FallbackJSONField(db_column="bankAccount", blank=True, null=True)
+    payment_reference = models.CharField(db_column='PaymentReference', max_length=128, blank=True, null=True)
 
     objects = PolicyHolderManager()
 
