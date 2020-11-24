@@ -4,7 +4,7 @@ from policyholder.qgl.gql_mutations import PolicyHolderInputType, PolicyHolderIn
 from policyholder.qgl.gql_mutations.base_mutation import BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin
 
 
-class DeletePolicyHolderMutation(BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin):
+class DeletePolicyHolderMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderMutation"
     _model = PolicyHolder
 
@@ -12,7 +12,7 @@ class DeletePolicyHolderMutation(BaseDeleteMutation, BaseHistoryModelDeleteMutat
         pass
 
 
-class DeletePolicyHolderInsureeMutation(BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin):
+class DeletePolicyHolderInsureeMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
     _model = PolicyHolderInsuree
 
@@ -20,7 +20,7 @@ class DeletePolicyHolderInsureeMutation(BaseDeleteMutation, BaseHistoryModelDele
         pass
 
 
-class DeletePolicyHolderContributionPlanMutation(BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin):
+class DeletePolicyHolderContributionPlanMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
     _model = PolicyHolderContributionPlan
 
@@ -28,7 +28,7 @@ class DeletePolicyHolderContributionPlanMutation(BaseDeleteMutation, BaseHistory
         pass
 
 
-class DeletePolicyHolderUserMutation(BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin):
+class DeletePolicyHolderUserMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderUserMutation"
     _model = PolicyHolderUser
 

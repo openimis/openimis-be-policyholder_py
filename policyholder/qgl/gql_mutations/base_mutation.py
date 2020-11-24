@@ -8,7 +8,7 @@ from policyholder.qgl.gql_mutations import ObjectNotExistException
 
 
 class BaseMutation(OpenIMISMutation):
-    _mutation_module = "policyHolder"
+    _mutation_module = "policyholder"
 
     @property
     def _mutation_class(self):
@@ -73,7 +73,6 @@ class BaseCreateMutationMixin:
             data.pop('client_mutation_id')
         if "client_mutation_label" in data:
             data.pop('client_mutation_label')
-
         cls.create_object(data)
 
     @classmethod
@@ -171,7 +170,7 @@ class BaseHistoryModelCreateMutationMixin:
 
     @classmethod
     def create_object(cls, user, object_data):
-        obj = cls._model.objects.create(**object_data)
+        obj = cls._model(**object_data)
         obj.save(username=user.username)
         return obj
 

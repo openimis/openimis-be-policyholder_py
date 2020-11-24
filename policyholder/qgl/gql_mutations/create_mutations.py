@@ -4,7 +4,7 @@ from policyholder.qgl.gql_mutations import PolicyHolderInputType, PolicyHolderIn
 from policyholder.qgl.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
 
 
-class CreatePolicyHolderMutation(BaseMutation, BaseHistoryModelCreateMutationMixin):
+class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderMutation"
     _model = PolicyHolder
 
@@ -12,7 +12,7 @@ class CreatePolicyHolderMutation(BaseMutation, BaseHistoryModelCreateMutationMix
         pass
 
 
-class CreatePolicyHolderInsureeMutation(BaseMutation, BaseHistoryModelCreateMutationMixin):
+class CreatePolicyHolderInsureeMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
     _model = PolicyHolderInsuree
 
@@ -20,7 +20,7 @@ class CreatePolicyHolderInsureeMutation(BaseMutation, BaseHistoryModelCreateMuta
         pass
 
 
-class CreatePolicyHolderContributionPlanMutation(BaseMutation, BaseHistoryModelCreateMutationMixin):
+class CreatePolicyHolderContributionPlanMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
     _model = PolicyHolderContributionPlan
 
@@ -28,7 +28,7 @@ class CreatePolicyHolderContributionPlanMutation(BaseMutation, BaseHistoryModelC
         pass
 
 
-class CreatePolicyHolderUserMutation(BaseMutation, BaseHistoryModelCreateMutationMixin):
+class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderUserMutation"
     _model = PolicyHolderUser
 

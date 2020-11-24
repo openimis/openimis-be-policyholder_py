@@ -5,8 +5,8 @@ from core.schema import OpenIMISMutation, TinyInt
 class PolicyHolderInputType(OpenIMISMutation.Input):
     id = graphene.UUID(required=False)
 
-    code = graphene.String(max_length=255)
-    trade_name = graphene.String(required=True, max_length=255)
+    code = graphene.String(max_length=255, required=True)
+    trade_name = graphene.String(max_length=255, required=True)
     location_ids = graphene.List(graphene.Int)
     address = graphene.types.json.JSONString(max_length=255, required=False)
     phone = graphene.String(max_length=50, required=False)

@@ -13,7 +13,6 @@ from policyholder.qgl.gql_mutations.update_mutations import UpdatePolicyHolderMu
 from policyholder.qgl.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
     PolicyHolderContributionPlanGQLType
 
-
 class Query(graphene.ObjectType):
     policy_holder = OrderedDjangoFilterConnectionField(PolicyHolderGQLType)
     policy_holder_insuree = OrderedDjangoFilterConnectionField(PolicyHolderInsureeGQLType)
@@ -52,4 +51,3 @@ class Mutation(graphene.ObjectType):
     delete_policy_holder_insuree = DeletePolicyHolderInsureeMutation.Field()
     delete_policy_holder_user = DeletePolicyHolderUserMutation.Field()
     delete_policy_holder_contribution_plan_bundle = DeletePolicyHolderContributionPlanMutation.Field()
-
