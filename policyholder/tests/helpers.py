@@ -17,36 +17,30 @@ def create_test_policy_holder(locations=None, custom_props={}):
 
     object_data = {
         'code': 'PHCode',
-        'version': 1,
-        'trade_name': 'PolicyHolderTradeName',
-        'address': 'PolicyHolderAddress',
+        'trade_name': 'CompanyTest',
+        'address': '{\"region\": \"APAC\", \"street\": \"test\"}',
         'phone': '111000111',
-        'fax': 'Policy Holder Fax',
+        'fax': 'Fax',
         'email': 'policy_holder@mail.com',
-        'contact_name': 'PolicyHolderContractName',
+        'contact_name': '{\"name\": \"test\", \"surname\": \"test-test\"}',
         'legal_form': 1,
         'activity_code': 2,
         'accountancy_account': '128903719082739810273',
+        'bank_account': "{ \"IBAN\": \"PL00 0000 2345 0000 1000 2345 2345\" }",
         'payment_reference': 'PolicyHolderPaymentReference',
-        'date_created': date(2010, 10, 30),
-        'date_updated': date(2010, 11, 30),
-        'user_updated': user,
-        'user_created': user,
-        'date_valid_from': date(2010, 11, 30),
-        'date_valid_to': None,
-        'active': True,
         'json_ext': json.dumps("{}"),
         **custom_props
     }
 
-    policy_holder = PolicyHolder.objects.create(**object_data)
+    policy_holder = PolicyHolder(**object_data)
+    policy_holder.save(username=user.username)
+
     if locations:
         policy_holder.locations_uuid.set(locations)
     else:
-        location = Location.objects.first()
+        location = Location.objects.order_by('id').first()
         policy_holder.locations_uuid.add(location)
 
-    policy_holder.save()
     return policy_holder
 
 
@@ -66,20 +60,18 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
     user = __get_or_create_simple_policy_holder_user()
 
     object_data = {
-        'version': 1,
         'policy_holder': policy_holder,
         'insuree': insuree,
         'contribution_plan_bundle': contribution_plan_bundle,
         'last_policy': last_policy,
         'json_ext': json.dumps("{}"),
-        'date_created': date(2010, 10, 30),
-        'date_updated': date(2010, 10, 31),
-        'user_updated': user,
-        'user_created': user,
         **custom_props
     }
 
-    return PolicyHolderInsuree.objects.create(**object_data)
+    policy_holder_insuree = PolicyHolderInsuree(**object_data)
+    policy_holder_insuree.save(username=user.username)
+
+    return policy_holder_insuree
 
 
 def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={}):
@@ -95,20 +87,17 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
         'user': user,
         'policy_holder': policy_holder,
         'json_ext': json.dumps("{}"),
-        'date_created': date(2010, 10, 30),
-        'date_updated': date(2010, 10, 31),
-        'user_updated': audit_user,
-        'user_created': audit_user,
-        'date_valid_from': date(2010, 10, 30),
-        'date_valid_to': None,
-        'active': 1,
         **custom_props
     }
 
-    return PolicyHolderUser.objects.create(**object_data)
+    policy_holder_user = PolicyHolderUser(**object_data)
+    policy_holder_user.save(username=user.username)
+
+    return policy_holder_user
 
 
 def __get_or_create_simple_policy_holder_user():
-    user, _ = User.objects.get_or_create(username='policy_holder_user',
-                                      i_user=InteractiveUser.objects.first())
+    user = User.objects.get(username="admin")
+    #user, _ = User.objects.get_or_create(username='policy_holder_user',
+    #                                  i_user=InteractiveUser.objects.first())
     return user
