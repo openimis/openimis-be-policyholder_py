@@ -23,7 +23,8 @@ class PolicyHolderManager(models.Manager):
 class PolicyHolder(core_models.HistoryBusinessModel):
     code = models.CharField(db_column='PolicyHolderCode', max_length=32)
     trade_name = models.CharField(db_column='TradeName', max_length=255)
-    locations_uuid = models.ManyToManyField(Location, verbose_name="LocationsUUID", blank=True)
+    #locations_uuid = models.ManyToManyField(Location, verbose_name="LocationsUUID", blank=True)
+    locations_uuid = models.ForeignKey(Location, db_column='LocationsUUID', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
     address = models.TextField(db_column='Address', blank=True, null=True)
     phone = models.CharField(db_column='Phone', max_length=16, blank=True, null=True)
     fax = models.CharField(db_column='Fax', max_length=16, blank=True, null=True)
