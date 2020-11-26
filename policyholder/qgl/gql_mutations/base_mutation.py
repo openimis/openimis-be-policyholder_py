@@ -39,18 +39,20 @@ class BaseMutation(OpenIMISMutation):
 
 
 class BaseDeleteMutation(BaseMutation):
-
     class Input:
         pass
 
     @classmethod
     def async_mutate(cls, user, **data):
         output = []
-        for uuid in data["uuids"]:
-            deletion_result = super(BaseDeleteMutation, cls)\
-                .async_mutate(user, uuid=uuid)
-            output += deletion_result
-        return output
+        if "uuids" in data:
+           for uuid in data["uuids"]:
+               deletion_result = super(BaseDeleteMutation, cls)\
+                   .async_mutate(user, uuid=uuid)
+               if deletion_result is None:
+                  deletion_result = [f'{uuid} is deleted']
+               output += deletion_result
+           return output
 
 
 class BaseCreateMutationMixin:
@@ -228,10 +230,10 @@ class BaseHistoryModelDeleteMutationMixin:
             raise ValidationError("mutation.authentication_required")
 
     @classmethod
-    def _mutate(cls, user, id):
-        object_to_delete = cls._model.objects.filter(id=id).first()
+    def _mutate(cls, user, uuid):
+        object_to_delete = cls._model.objects.filter(id=uuid).first()
 
         if object_to_delete is None:
-            cls._object_not_exist_exception(id)
+            cls._object_not_exist_exception(uuid)
         else:
             object_to_delete.delete(user.username)
