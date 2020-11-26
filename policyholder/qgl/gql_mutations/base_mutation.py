@@ -39,6 +39,7 @@ class BaseMutation(OpenIMISMutation):
 
 
 class BaseDeleteMutation(BaseMutation):
+
     class Input:
         pass
 
@@ -53,6 +54,24 @@ class BaseDeleteMutation(BaseMutation):
                   deletion_result = [f'{uuid} is deleted']
                output += deletion_result
            return output
+
+
+class BaseReplaceMutation(BaseMutation):
+
+    class Input:
+        pass
+
+    @classmethod
+    def async_mutate(cls, user, **data):
+        if "uuid" in data:
+          try:
+              cls._validate_mutation(user, **data)
+              mutation_result = cls._mutate(user, **data)
+              return mutation_result
+          except Exception as exc:
+              return [{
+                  'message': "Failed to process {} mutation".format(cls._mutation_class),
+                  'detail': str(exc)}]
 
 
 class BaseCreateMutationMixin:
@@ -237,3 +256,31 @@ class BaseHistoryModelDeleteMutationMixin:
             cls._object_not_exist_exception(uuid)
         else:
             object_to_delete.delete(user.username)
+
+
+class BaseHistoryModelReplaceMutationMixin:
+    @property
+    def _model(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _object_not_exist_exception(cls, obj_uuid):
+        raise ObjectNotExistException(cls._model, obj_uuid)
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        cls._validate_user(user)
+
+    @classmethod
+    def _validate_user(cls, user):
+        if type(user) is AnonymousUser or not user.id:
+            raise ValidationError("mutation.authentication_required")
+
+    @classmethod
+    def _mutate(cls, user, uuid):
+        object_to_replace = cls._model.objects.filter(id=uuid).first()
+
+        if object_to_replace is None:
+            cls._object_not_exist_exception(uuid)
+        else:
+            object_to_replace.replace(user.username)

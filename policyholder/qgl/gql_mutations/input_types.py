@@ -51,3 +51,7 @@ class PolicyHolderUserInputType(OpenIMISMutation.Input):
 
 class PolicyHolderDeleteInputType(OpenIMISMutation.Input):
     uuids = graphene.List(graphene.UUID)
+
+
+class PolicyHolderReplaceInputType(OpenIMISMutation.Input):
+    uuids = graphene.UUID(required=True)
