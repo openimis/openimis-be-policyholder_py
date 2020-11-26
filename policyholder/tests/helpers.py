@@ -33,13 +33,12 @@ def create_test_policy_holder(locations=None, custom_props={}):
     }
 
     policy_holder = PolicyHolder(**object_data)
-    policy_holder.save(username=user.username)
-
     if locations:
-        policy_holder.locations_uuid.set(locations)
+        policy_holder.locations_uuid = locations
     else:
         location = Location.objects.order_by('id').first()
-        policy_holder.locations_uuid.add(location)
+        policy_holder.locations_uuid = location
+    policy_holder.save(username=user.username)
 
     return policy_holder
 

@@ -19,6 +19,7 @@ class PolicyHolderGQLType(DjangoObjectType):
             "version": ["exact"],
             "trade_name": ["exact", "istartswith", "icontains", "iexact"],
             "address": ["exact", "istartswith", "icontains", "iexact"],
+            **prefix_filterset("locations_uuid__", LocationGQLType._meta.filter_fields),
             "phone": ["exact", "istartswith", "icontains", "iexact"],
             "fax": ["exact", "istartswith", "icontains", "iexact"],
             "email": ["exact", "istartswith", "icontains", "iexact"],
