@@ -66,7 +66,7 @@ class BaseReplaceMutation(BaseMutation):
         if "uuid" in data:
           try:
               cls._validate_mutation(user, **data)
-              mutation_result = cls._mutate(user, **data)
+              mutation_result = cls._mutate(user, uuid=data["uuid"])
               return mutation_result
           except Exception as exc:
               return [{
@@ -226,7 +226,7 @@ class BaseHistoryModelUpdateMutationMixin:
 
     @classmethod
     def update_object(cls, user, object_to_update):
-        object_to_update.save(user.username)
+        object_to_update.save(username=user.username)
         return object_to_update
 
 
@@ -255,7 +255,7 @@ class BaseHistoryModelDeleteMutationMixin:
         if object_to_delete is None:
             cls._object_not_exist_exception(uuid)
         else:
-            object_to_delete.delete(user.username)
+            object_to_delete.delete(username=user.username)
 
 
 class BaseHistoryModelReplaceMutationMixin:
@@ -279,8 +279,7 @@ class BaseHistoryModelReplaceMutationMixin:
     @classmethod
     def _mutate(cls, user, uuid):
         object_to_replace = cls._model.objects.filter(id=uuid).first()
-
         if object_to_replace is None:
             cls._object_not_exist_exception(uuid)
         else:
-            object_to_replace.replace(user.username)
+            object_to_replace.replace_object(username=user.username)
