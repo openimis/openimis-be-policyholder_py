@@ -47,3 +47,11 @@ class PolicyHolderUserInputType(OpenIMISMutation.Input):
     policy_holder_id = graphene.UUID(required=False)
 
     json_ext = graphene.types.json.JSONString(required=False)
+
+
+class PolicyHolderDeleteInputType(OpenIMISMutation.Input):
+    uuids = graphene.List(graphene.UUID)
+
+
+class PolicyHolderReplaceInputType(OpenIMISMutation.Input):
+    uuid = graphene.UUID(required=True)
