@@ -1,35 +1,38 @@
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
-from policyholder.qgl.gql_mutations import PolicyHolderReplaceInputType
 from policyholder.qgl.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
-
+from core.qgl.gql_mutations import ReplaceInputType
 
 class ReplacePolicyHolderMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
     _mutation_class = "PolicyHolderMutation"
+    _mutation_module = "policyholder"
     _model = PolicyHolder
 
-    class Input(PolicyHolderReplaceInputType):
+    class Input(ReplaceInputType):
         pass
 
 
 class ReplacePolicyHolderInsureeMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
+    _mutation_module = "policyholder"
     _model = PolicyHolderInsuree
 
-    class Input(PolicyHolderReplaceInputType):
+    class Input(ReplaceInputType):
         pass
 
 
 class ReplacePolicyHolderContributionPlanMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
+    _mutation_module = "policyholder"
     _model = PolicyHolderContributionPlan
 
-    class Input(PolicyHolderReplaceInputType):
+    class Input(ReplaceInputType):
         pass
 
 
 class ReplacePolicyHolderUserMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
     _mutation_class = "PolicyHolderUserMutation"
+    _mutation_module = "policyholder"
     _model = PolicyHolderUser
 
-    class Input(PolicyHolderReplaceInputType):
+    class Input(ReplaceInputType):
         pass

@@ -8,7 +8,6 @@ from policyholder.qgl.gql_mutations import ObjectNotExistException
 
 
 class BaseMutation(OpenIMISMutation):
-    _mutation_module = "policyholder"
 
     @property
     def _mutation_class(self):
