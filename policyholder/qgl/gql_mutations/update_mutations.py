@@ -1,7 +1,7 @@
+from core.qgl.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.qgl.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
-from policyholder.qgl.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
 
 
 class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
