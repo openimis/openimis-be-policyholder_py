@@ -3,17 +3,17 @@ import graphene_django_optimizer as gql_optimizer
 
 from core.schema import OrderedDjangoFilterConnectionField
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, PolicyHolderContributionPlan
-from policyholder.qgl.gql_mutations.create_mutations import CreatePolicyHolderMutation, \
+from policyholder.gql.gql_mutations.create_mutations import CreatePolicyHolderMutation, \
     CreatePolicyHolderInsureeMutation, CreatePolicyHolderUserMutation, CreatePolicyHolderContributionPlanMutation
-from policyholder.qgl.gql_mutations.delete_mutations import DeletePolicyHolderMutation, \
+from policyholder.gql.gql_mutations.delete_mutations import DeletePolicyHolderMutation, \
     DeletePolicyHolderInsureeMutation, DeletePolicyHolderUserMutation, DeletePolicyHolderContributionPlanMutation
-from policyholder.qgl.gql_mutations.update_mutations import UpdatePolicyHolderMutation, \
+from policyholder.gql.gql_mutations.update_mutations import UpdatePolicyHolderMutation, \
     UpdatePolicyHolderInsureeMutation, UpdatePolicyHolderUserMutation, UpdatePolicyHolderContributionPlanMutation
-from policyholder.qgl.gql_mutations.replace_mutation import ReplacePolicyHolderMutation, ReplacePolicyHolderInsureeMutation, \
+from policyholder.gql.gql_mutations.replace_mutation import ReplacePolicyHolderMutation, ReplacePolicyHolderInsureeMutation, \
     ReplacePolicyHolderContributionPlanMutation, ReplacePolicyHolderUserMutation
 
 
-from policyholder.qgl.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
+from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
     PolicyHolderContributionPlanGQLType
 
 class Query(graphene.ObjectType):

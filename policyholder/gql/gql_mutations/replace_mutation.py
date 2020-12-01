@@ -1,5 +1,5 @@
-from core.qgl.gql_mutations import ReplaceInputType
-from core.qgl.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
+from core.gql.gql_mutations import ReplaceInputType
+from core.gql.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 
 

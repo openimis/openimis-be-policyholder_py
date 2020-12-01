@@ -1,10 +1,10 @@
-from core.qgl.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
+from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
-from policyholder.qgl.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
+from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
 
 
-class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
+class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolder
@@ -13,7 +13,7 @@ class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutati
         pass
 
 
-class CreatePolicyHolderInsureeMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
+class UpdatePolicyHolderInsureeMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderInsuree
@@ -22,7 +22,7 @@ class CreatePolicyHolderInsureeMutation(BaseHistoryModelCreateMutationMixin, Bas
         pass
 
 
-class CreatePolicyHolderContributionPlanMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
+class UpdatePolicyHolderContributionPlanMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderContributionPlan
@@ -31,7 +31,7 @@ class CreatePolicyHolderContributionPlanMutation(BaseHistoryModelCreateMutationM
         pass
 
 
-class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
+class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderUserMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderUser

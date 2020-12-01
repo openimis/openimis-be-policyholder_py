@@ -1,5 +1,5 @@
-from core.qgl.gql_mutations import DeleteInputType
-from core.qgl.gql_mutations.base_mutation import BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin
+from core.gql.gql_mutations import DeleteInputType
+from core.gql.gql_mutations.base_mutation import BaseDeleteMutation, BaseHistoryModelDeleteMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 
 
