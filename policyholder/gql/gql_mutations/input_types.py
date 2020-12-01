@@ -17,6 +17,8 @@ class PolicyHolderInputType(OpenIMISMutation.Input):
     accountancy_account = graphene.String(required=False)
     bank_account = graphene.types.json.JSONString(required=False)
     payment_reference = graphene.String(required=False)
+    date_valid_from = graphene.Date(required=False)
+    date_valid_to = graphene.Date(required=False)
     json_ext = graphene.types.json.JSONString(required=False)
 
 
