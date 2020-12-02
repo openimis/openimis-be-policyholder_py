@@ -18,7 +18,7 @@ class PolicyHolderGQLType(DjangoObjectType):
             "code": ["exact", "istartswith", "icontains", "iexact"],
             "version": ["exact"],
             "trade_name": ["exact", "istartswith", "icontains", "iexact"],
-            **prefix_filterset("locations_uuid__", LocationGQLType._meta.filter_fields),
+            **prefix_filterset("locations__", LocationGQLType._meta.filter_fields),
             "phone": ["exact", "istartswith", "icontains", "iexact"],
             "fax": ["exact", "istartswith", "icontains", "iexact"],
             "email": ["exact", "istartswith", "icontains", "iexact"],
@@ -55,6 +55,7 @@ class PolicyHolderInsureeGQLType(DjangoObjectType):
             "date_updated": ["exact", "lt", "lte", "gt", "gte"],
             "user_created": ["exact"],
             "user_updated": ["exact"],
+            "is_deleted": ["exact"]
         }
 
         connection_class = ExtendedConnection

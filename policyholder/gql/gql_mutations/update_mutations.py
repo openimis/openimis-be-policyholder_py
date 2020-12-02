@@ -1,7 +1,7 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
-    PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
+    PolicyHolderContributionPlanInputType, PolicyHolderUserInputType, PolicyHolderUpdateInputType
 
 
 class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
@@ -9,7 +9,7 @@ class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutati
     _mutation_module = "policyholder"
     _model = PolicyHolder
 
-    class Input(PolicyHolderInputType):
+    class Input(PolicyHolderUpdateInputType):
         pass
 
 

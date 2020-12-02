@@ -17,10 +17,25 @@ from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLT
     PolicyHolderContributionPlanGQLType
 
 class Query(graphene.ObjectType):
-    policy_holder = OrderedDjangoFilterConnectionField(PolicyHolderGQLType)
-    policy_holder_insuree = OrderedDjangoFilterConnectionField(PolicyHolderInsureeGQLType)
-    policy_holder_user = OrderedDjangoFilterConnectionField(PolicyHolderUserGQLType)
-    policy_holder_contribution_plan_bundle = OrderedDjangoFilterConnectionField(PolicyHolderContributionPlanGQLType)
+    policy_holder = OrderedDjangoFilterConnectionField(
+        PolicyHolderGQLType,
+        orderBy=graphene.List(of_type=graphene.String),
+    )
+
+    policy_holder_insuree = OrderedDjangoFilterConnectionField(
+        PolicyHolderInsureeGQLType,
+        orderBy=graphene.List(of_type=graphene.String),
+    )
+
+    policy_holder_user = OrderedDjangoFilterConnectionField(
+        PolicyHolderUserGQLType,
+        orderBy=graphene.List(of_type=graphene.String),
+    )
+
+    policy_holder_contribution_plan_bundle = OrderedDjangoFilterConnectionField(
+        PolicyHolderContributionPlanGQLType,
+        orderBy=graphene.List(of_type=graphene.String),
+    )
 
     def resolve_policy_holder(self, info, **kwargs):
         query = PolicyHolder.objects
