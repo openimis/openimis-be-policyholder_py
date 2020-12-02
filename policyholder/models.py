@@ -23,7 +23,7 @@ class PolicyHolderManager(models.Manager):
 class PolicyHolder(core_models.HistoryBusinessModel):
     code = models.CharField(db_column='PolicyHolderCode', max_length=32)
     trade_name = models.CharField(db_column='TradeName', max_length=255)
-    locations_uuid = models.ForeignKey(Location, db_column='LocationsUUID', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
+    locations = models.ForeignKey(Location, db_column='LocationsId', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
     address = FallbackJSONField(db_column='Address', blank=True, null=True)
     phone = models.CharField(db_column='Phone', max_length=16, blank=True, null=True)
     fax = models.CharField(db_column='Fax', max_length=16, blank=True, null=True)
@@ -66,7 +66,7 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
                                       on_delete=models.deletion.DO_NOTHING)
     insuree = models.ForeignKey(Insuree, db_column='InsureeId',
                                 on_delete=models.deletion.DO_NOTHING)
-    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
+    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContributionPlanBundleId',
                                                  on_delete=models.deletion.DO_NOTHING)
     last_policy = models.ForeignKey(Policy, db_column='LastPolicyId', on_delete=models.deletion.DO_NOTHING)
 
@@ -99,7 +99,7 @@ class PolicyHolderContributionPlanManager(models.Manager):
 class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
-    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContribuiotnPlanBundleId',
+    contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContributionPlanBundleId',
                                                  on_delete=models.deletion.DO_NOTHING)
 
     objects = PolicyHolderContributionPlanManager()

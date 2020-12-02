@@ -6,7 +6,7 @@ class PolicyHolderInputType(OpenIMISMutation.Input):
 
     code = graphene.String(max_length=255, required=True)
     trade_name = graphene.String(max_length=255, required=True)
-    location_ids = graphene.UUID(required=False)
+    locations_id = graphene.Int(required=False, name="locationsId")
     address = graphene.types.json.JSONString(max_length=255, required=False)
     phone = graphene.String(max_length=50, required=False)
     fax = graphene.String(max_length=50, required=False)
@@ -24,11 +24,10 @@ class PolicyHolderInputType(OpenIMISMutation.Input):
 
 class PolicyHolderInsureeInputType(OpenIMISMutation.Input):
     id = graphene.UUID(required=False)
-
     policy_holder_id = graphene.UUID(required=False)
-    insuree_id = graphene.UUID(required=False)
-    contribution_plan_bundle_id = graphene.UUID(requried=False)
-    last_policy_id = graphene.Int(required=False)
+    insuree_id = graphene.Int(required=False, name="insureeId")
+    contribution_plan_bundle_id = graphene.Int(requried=False, name="contributionPlanBundleId")
+    last_policy_id = graphene.Int(required=False, name="lastPolicyId")
     json_ext = graphene.types.json.JSONString(required=False)
 
 
@@ -36,7 +35,7 @@ class PolicyHolderContributionPlanInputType(OpenIMISMutation.Input):
     id = graphene.UUID(required=False)
 
     policy_holder_id = graphene.UUID(required=False)
-    contribution_plan_bundle_id = graphene.UUID(requried=False)
+    contribution_plan_bundle_id = graphene.UUID(requried=False, name="contributionPlanBundleId")
 
     json_ext = graphene.types.json.JSONString(required=False)
 
