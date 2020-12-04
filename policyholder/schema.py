@@ -1,6 +1,7 @@
 import graphene
 import graphene_django_optimizer as gql_optimizer
 
+from location.apps import LocationConfig
 from core.schema import OrderedDjangoFilterConnectionField
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, PolicyHolderContributionPlan
 from policyholder.gql.gql_mutations.create_mutations import CreatePolicyHolderMutation, \
@@ -19,6 +20,8 @@ from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLT
 class Query(graphene.ObjectType):
     policy_holder = OrderedDjangoFilterConnectionField(
         PolicyHolderGQLType,
+        parent_location=graphene.String(),
+        parent_location_level=graphene.Int(),
         orderBy=graphene.List(of_type=graphene.String),
     )
 
@@ -38,8 +41,18 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_policy_holder(self, info, **kwargs):
-        query = PolicyHolder.objects
-        return gql_optimizer.query(query.all(), info)
+        filters = []
+        parent_location = kwargs.get('parent_location')
+        if parent_location is not None:
+            parent_location_level = kwargs.get('parent_location_level')
+            if parent_location_level is None:
+                raise NotImplementedError("Missing parentLocationLevel argument when filtering on parentLocation")
+            f = "uuid"
+            for i in range(len(LocationConfig.location_types) - parent_location_level - 1):
+                f = "parent__" + f
+            f = "location__" + f
+            filters += [Q(**{f: parent_location})]
+        return gql_optimizer.query(PolicyHolder.objects.filter(*filters).all(), info)
 
     def resolve_policy_holder_insuree(self, info, **kwargs):
         query = PolicyHolderInsuree.objects
