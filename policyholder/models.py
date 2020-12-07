@@ -43,7 +43,7 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         if isinstance(user, ResolveInfo):
             user = user.context.user
         if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=-1)
+            return queryset.filter(id=None)
         if settings.ROW_SECURITY:
             pass
         return queryset
@@ -78,7 +78,7 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
         if isinstance(user, ResolveInfo):
             user = user.context.user
         if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=-1)
+            return queryset.filter(id=None)
         if settings.ROW_SECURITY:
             pass
         return queryset
@@ -110,7 +110,7 @@ class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
         if isinstance(user, ResolveInfo):
             user = user.context.user
         if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=-1)
+            return queryset.filter(id=None)
         if settings.ROW_SECURITY:
             pass
         return queryset
@@ -142,7 +142,7 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
         if isinstance(user, ResolveInfo):
             user = user.context.user
         if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=-1)
+            return queryset.filter(id=None)
         if settings.ROW_SECURITY:
             pass
         return queryset
