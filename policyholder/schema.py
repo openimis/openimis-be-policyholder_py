@@ -51,7 +51,7 @@ class Query(graphene.ObjectType):
             f = "uuid"
             for i in range(len(LocationConfig.location_types) - parent_location_level - 1):
                 f = "parent__" + f
-            f = "location__" + f
+            f = "locations__" + f
             filters += [Q(**{f: parent_location})]
         return gql_optimizer.query(PolicyHolder.objects.filter(*filters).all(), info)
 
