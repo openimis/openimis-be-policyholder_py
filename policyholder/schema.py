@@ -1,6 +1,7 @@
 import graphene
 import graphene_django_optimizer as gql_optimizer
 
+from django.db.models import Q
 from location.apps import LocationConfig
 from core.schema import OrderedDjangoFilterConnectionField
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, PolicyHolderContributionPlan
