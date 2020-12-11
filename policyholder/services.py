@@ -20,7 +20,7 @@ class PolicyHolder(object):
          pass
 
     def get_by_id(self, by_policy_holder):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return{
                 "success": False,
                 "message": "Authentication required",
@@ -36,7 +36,7 @@ class PolicyHolder(object):
             }
 
     def create(self, policy_holder):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -64,7 +64,7 @@ class PolicyHolder(object):
         }
 
     def update(self, policy_holder):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -93,7 +93,7 @@ class PolicyHolder(object):
         }
 
     def delete(self, policy_holder):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -124,7 +124,7 @@ class PolicyHolderInsuree(object):
         pass
 
     def create(self, policy_holder_insuree):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -152,7 +152,7 @@ class PolicyHolderInsuree(object):
         }
 
     def update(self, policy_holder_insuree):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -181,7 +181,7 @@ class PolicyHolderInsuree(object):
         }
 
     def delete(self, policy_holder_insuree):
-        if not self.user.id:
+        if type(self.user) is AnonymousUser or not self.user.id:
             return {
                 "success": False,
                 "message": "Authentication required",
@@ -205,7 +205,36 @@ class PolicyHolderInsuree(object):
             }
 
     def replace_policy_holder_insuree(self, policy_holder_insuree):
-        pass
+        if type(self.user) is AnonymousUser or not self.user.id:
+            return {
+                "success": False,
+                "message": "Authentication required",
+                "detail": "PermissionDenied",
+                "data": "",
+            }
+        try:
+            phim_to_replace = PolicyHolderInsureeModel._model.objects.filter(id=policy_holder_insuree['uuid']).first()
+            if phim_to_replace is None:
+                PolicyHolderInsureeModel._object_not_exist_exception(policy_holder_insuree['uuid'])
+            else:
+                phim_to_replace.replace_object(data=policy_holder_insuree, username=self.user.username)
+            uuid_string = str(phim_to_replace.id)
+            dict_representation = model_to_dict(phim_to_replace)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return {
+                "success": False,
+                "message": "Failed to replace PolicyHolderInsuree",
+                "detail": str(exc),
+                "datas": "",
+            }
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "old_object": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+            "uuid_new_object": str(phim_to_replace.replacement_uuid),
+        }
 
 
 @core.comparable
