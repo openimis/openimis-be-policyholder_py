@@ -11,7 +11,7 @@ from policyholder.gql.gql_mutations.delete_mutations import DeletePolicyHolderMu
     DeletePolicyHolderInsureeMutation, DeletePolicyHolderUserMutation, DeletePolicyHolderContributionPlanMutation
 from policyholder.gql.gql_mutations.update_mutations import UpdatePolicyHolderMutation, \
     UpdatePolicyHolderInsureeMutation, UpdatePolicyHolderUserMutation, UpdatePolicyHolderContributionPlanMutation
-from policyholder.gql.gql_mutations.replace_mutation import ReplacePolicyHolderMutation, ReplacePolicyHolderInsureeMutation, \
+from policyholder.gql.gql_mutations.replace_mutation import ReplacePolicyHolderInsureeMutation, \
     ReplacePolicyHolderContributionPlanMutation, ReplacePolicyHolderUserMutation
 
 
@@ -84,7 +84,6 @@ class Mutation(graphene.ObjectType):
     delete_policy_holder_user = DeletePolicyHolderUserMutation.Field()
     delete_policy_holder_contribution_plan_bundle = DeletePolicyHolderContributionPlanMutation.Field()
 
-    replace_policy_holder = ReplacePolicyHolderMutation.Field()
     replace_policy_holder_insuree = ReplacePolicyHolderInsureeMutation.Field()
     replace_policy_holder_user = ReplacePolicyHolderUserMutation.Field()
     replace_policy_holder_contribution_plan_bundle = ReplacePolicyHolderContributionPlanMutation.Field()

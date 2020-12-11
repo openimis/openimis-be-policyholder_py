@@ -1,15 +1,7 @@
-from core.gql.gql_mutations import ReplaceInputType
+from policyholder.gql.gql_mutations import PolicyHolderInsureeReplaceInputType, \
+    PolicyHolderContributionPlanReplaceInputType, PolicyHolderUserReplaceInputType
 from core.gql.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
-
-
-class ReplacePolicyHolderMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
-    _mutation_class = "PolicyHolderMutation"
-    _mutation_module = "policyholder"
-    _model = PolicyHolder
-
-    class Input(ReplaceInputType):
-        pass
 
 
 class ReplacePolicyHolderInsureeMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
@@ -17,7 +9,7 @@ class ReplacePolicyHolderInsureeMutation(BaseHistoryModelReplaceMutationMixin, B
     _mutation_module = "policyholder"
     _model = PolicyHolderInsuree
 
-    class Input(ReplaceInputType):
+    class Input(PolicyHolderInsureeReplaceInputType):
         pass
 
 
@@ -26,7 +18,7 @@ class ReplacePolicyHolderContributionPlanMutation(BaseHistoryModelReplaceMutatio
     _mutation_module = "policyholder"
     _model = PolicyHolderContributionPlan
 
-    class Input(ReplaceInputType):
+    class Input(PolicyHolderContributionPlanReplaceInputType):
         pass
 
 
@@ -35,5 +27,5 @@ class ReplacePolicyHolderUserMutation(BaseHistoryModelReplaceMutationMixin, Base
     _mutation_module = "policyholder"
     _model = PolicyHolderUser
 
-    class Input(ReplaceInputType):
+    class Input(PolicyHolderUserReplaceInputType):
         pass
