@@ -39,12 +39,7 @@ class PolicyHolder(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolder", method="get", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def create(self, policy_holder):
@@ -56,12 +51,7 @@ class PolicyHolder(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolder", method="create", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def update(self, policy_holder):
@@ -74,12 +64,7 @@ class PolicyHolder(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolder", method="update", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def delete(self, policy_holder):
@@ -109,12 +94,7 @@ class PolicyHolderInsuree(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderInsuree", method="get", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def create(self, policy_holder_insuree):
@@ -126,12 +106,7 @@ class PolicyHolderInsuree(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderInsuree", method="create", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def update(self, policy_holder_insuree):
@@ -144,12 +119,7 @@ class PolicyHolderInsuree(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderInsuree", method="update", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def delete(self, policy_holder_insuree):
@@ -197,12 +167,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderContributionPlan", method="get", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def create(self, policy_holder_contribution_plan):
@@ -215,12 +180,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderContributionPlan", method="create", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def update(self, policy_holder_contribution_plan):
@@ -233,12 +193,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderContributionPlan", method="update", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def delete(self, policy_holder_contribution_plan):
@@ -286,12 +241,7 @@ class PolicyHolderUser(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderUser", method="get", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def create(self, policy_holder_user):
@@ -303,12 +253,7 @@ class PolicyHolderUser(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderUser", method="create", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def update(self, policy_holder_user):
@@ -321,12 +266,7 @@ class PolicyHolderUser(object):
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
             return _output_exception(model_name="PolicyHolderUser", method="update", exception=exc)
-        return {
-            "success": True,
-            "message": "Ok",
-            "detail": "",
-            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
-        }
+        return _output_result_success(dict_representation=dict_representation)
 
     @check_authentication
     def delete(self, policy_holder_user):
@@ -366,4 +306,12 @@ def _output_exception(model_name, method, exception):
         "message": f"Failed to {method} {model_name}",
         "detail": str(exception),
         "data": "",
+    }
+
+def _output_result_success(dict_representation):
+    return {
+        "success": True,
+        "message": "Ok",
+        "detail": "",
+        "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
     }
