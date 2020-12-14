@@ -38,7 +38,7 @@ class PolicyHolder(object):
             dict_representation = model_to_dict(ph)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolder", exception=exc)
+            return _output_exception(model_name="PolicyHolder", method="get", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -55,7 +55,7 @@ class PolicyHolder(object):
             dict_representation = model_to_dict(phm)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolder", exception=exc)
+            return _output_exception(model_name="PolicyHolder", method="create", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -73,7 +73,7 @@ class PolicyHolder(object):
             dict_representation = model_to_dict(updated_phm)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolder", exception=exc)
+            return _output_exception(model_name="PolicyHolder", method="update", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -92,7 +92,7 @@ class PolicyHolder(object):
                 "detail": "",
             }
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolder", exception=exc)
+            return _output_exception(model_name="PolicyHolder", method="delete", exception=exc)
 
 
 class PolicyHolderInsuree(object):
@@ -108,7 +108,7 @@ class PolicyHolderInsuree(object):
             dict_representation = model_to_dict(phi)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+            return _output_exception(model_name="PolicyHolderInsuree", method="get", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -125,7 +125,7 @@ class PolicyHolderInsuree(object):
             dict_representation = model_to_dict(phim)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+            return _output_exception(model_name="PolicyHolderInsuree", method="create", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -143,7 +143,7 @@ class PolicyHolderInsuree(object):
             dict_representation = model_to_dict(updated_phim)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+            return _output_exception(model_name="PolicyHolderInsuree", method="update", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -162,7 +162,7 @@ class PolicyHolderInsuree(object):
                 "detail": "",
             }
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+            return _output_exception(model_name="PolicyHolderInsuree", method="delete", exception=exc)
 
     @check_authentication
     def replace_policy_holder_insuree(self, policy_holder_insuree):
@@ -173,7 +173,7 @@ class PolicyHolderInsuree(object):
             dict_representation = model_to_dict(phim_to_replace)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+            return _output_exception(model_name="PolicyHolderInsuree", method="replace", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -196,7 +196,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation = model_to_dict(phcp)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+            return _output_exception(model_name="PolicyHolderContributionPlan", method="get", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -214,7 +214,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation = model_to_dict(phcp)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+            return _output_exception(model_name="PolicyHolderContributionPlan", method="create", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -232,7 +232,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation = model_to_dict(updated_phcp)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+            return _output_exception(model_name="PolicyHolderContributionPlan", method="update", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -251,7 +251,7 @@ class PolicyHolderContributionPlan(object):
                 "detail": "",
             }
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+            return _output_exception(model_name="PolicyHolderContributionPlan", method="delete", exception=exc)
 
     @check_authentication
     def replace_policy_holder_contribution_plan_bundle(self, policy_holder_contribution_plan):
@@ -262,7 +262,7 @@ class PolicyHolderContributionPlan(object):
             dict_representation = model_to_dict(phcp_to_replace)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+            return _output_exception(model_name="PolicyHolderContributionPlan", method="replace", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -285,7 +285,7 @@ class PolicyHolderUser(object):
             dict_representation = model_to_dict(phu)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+            return _output_exception(model_name="PolicyHolderUser", method="get", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -302,7 +302,7 @@ class PolicyHolderUser(object):
             dict_representation = model_to_dict(phu)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+            return _output_exception(model_name="PolicyHolderUser", method="create", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -320,7 +320,7 @@ class PolicyHolderUser(object):
             dict_representation = model_to_dict(updated_phu)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+            return _output_exception(model_name="PolicyHolderUser", method="update", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -339,7 +339,7 @@ class PolicyHolderUser(object):
                 "detail": "",
             }
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+            return _output_exception(model_name="PolicyHolderUser", method="delete", exception=exc)
 
     @check_authentication
     def replace_policy_holder_user(self, policy_holder_user):
@@ -350,7 +350,7 @@ class PolicyHolderUser(object):
             dict_representation = model_to_dict(phu_to_replace)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+            return _output_exception(model_name="PolicyHolderUser", method="replace", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -360,10 +360,10 @@ class PolicyHolderUser(object):
         }
 
 
-def _output_exception(model_name, exception):
+def _output_exception(model_name, method, exception):
     return {
         "success": False,
-        "message": "Failed to create "+model_name,
+        "message": f"Failed to {method} {model_name}",
         "detail": str(exception),
         "data": "",
     }
