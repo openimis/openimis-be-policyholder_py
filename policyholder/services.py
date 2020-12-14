@@ -11,51 +11,34 @@ from policyholder.models import PolicyHolder as PolicyHolderModel, PolicyHolderU
     PolicyHolderContributionPlan as PolicyHolderContributionPlanModel, PolicyHolderInsuree as PolicyHolderInsureeModel
 
 
-class PolicyHolder(object):
-
-    def __init__(self, user):
-        self.user = user
-
-    def get(self, limit=100, page=1, **kwargs):
-         pass
-
-    def get_by_id(self, by_policy_holder):
+def check_authentication(function):
+    def wrapper(self, *args, **kwargs):
         if type(self.user) is AnonymousUser or not self.user.id:
-            return{
+            return {
                 "success": False,
                 "message": "Authentication required",
                 "detail": "PermissionDenied",
             }
         else:
-            policy_holder = PolicyHolderModel.objects.get(id=by_policy_holder.id)
-            return{
-                "success": True,
-                "message": "Ok",
-                "detail": "",
-                "data": serializers.serialize("json", policy_holder),
-            }
+            result = function(self, *args, **kwargs)
+            return result
+    return wrapper
 
-    def create(self, policy_holder):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-            }
+
+class PolicyHolder(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    @check_authentication
+    def get_by_id(self, by_policy_holder):
         try:
-            print(policy_holder)
-            phm = PolicyHolderModel(**policy_holder)
-            phm.save(username=self.user.username)
-            uuid_string = str(phm.id)
-            dict_representation = model_to_dict(phm)
+            ph = PolicyHolderModel.objects.get(id=by_policy_holder.id)
+            uuid_string = str(ph.id)
+            dict_representation = model_to_dict(ph)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return {
-                "success": False,
-                "message": "Failed to create PolicyHolder",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolder", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -63,14 +46,25 @@ class PolicyHolder(object):
             "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
         }
 
+    @check_authentication
+    def create(self, policy_holder):
+        try:
+            phm = PolicyHolderModel(**policy_holder)
+            phm.save(username=self.user.username)
+            uuid_string = str(phm.id)
+            dict_representation = model_to_dict(phm)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolder", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
+
+    @check_authentication
     def update(self, policy_holder):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-                "data": "",
-            }
         try:
             updated_phm = PolicyHolderModel.objects.filter(id=policy_holder['id']).first()
             [setattr(updated_phm, key, policy_holder[key]) for key in policy_holder]
@@ -79,12 +73,7 @@ class PolicyHolder(object):
             dict_representation = model_to_dict(updated_phm)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return {
-                "success": False,
-                "message": "Failed to update PolicyHolder",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolder", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -92,14 +81,8 @@ class PolicyHolder(object):
             "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
         }
 
+    @check_authentication
     def delete(self, policy_holder):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-                "data": "",
-            }
         try:
             phm_to_delete = PolicyHolderModel.objects.filter(id=policy_holder['id']).first()
             phm_to_delete.delete(username=self.user.username)
@@ -109,41 +92,23 @@ class PolicyHolder(object):
                 "detail": "",
             }
         except Exception as exc:
-            return{
-                "success": False,
-                "message": "Failed to delete PolicyHolder",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolder", exception=exc)
 
 
 class PolicyHolderInsuree(object):
 
     def __init__(self, user):
         self.user = user
-        pass
 
-    def create(self, policy_holder_insuree):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-            }
+    @check_authentication
+    def get_by_id(self, by_policy_holder_insuree):
         try:
-            print(policy_holder_insuree)
-            phim = PolicyHolderInsureeModel(**policy_holder_insuree)
-            phim.save(username=self.user.username)
-            uuid_string = str(phim.id)
-            dict_representation = model_to_dict(phim)
+            phi = PolicyHolderInsureeModel.objects.get(id=by_policy_holder_insuree.id)
+            uuid_string = str(phi.id)
+            dict_representation = model_to_dict(phi)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return {
-                "success": False,
-                "message": "Failed to create PolicyHolderInsuree",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -151,14 +116,25 @@ class PolicyHolderInsuree(object):
             "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
         }
 
+    @check_authentication
+    def create(self, policy_holder_insuree):
+        try:
+            phim = PolicyHolderInsureeModel(**policy_holder_insuree)
+            phim.save(username=self.user.username)
+            uuid_string = str(phim.id)
+            dict_representation = model_to_dict(phim)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
+
+    @check_authentication
     def update(self, policy_holder_insuree):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-                "data": "",
-            }
         try:
             updated_phim = PolicyHolderInsureeModel.objects.filter(id=policy_holder_insuree['id']).first()
             [setattr(updated_phim, key, policy_holder_insuree[key]) for key in policy_holder_insuree]
@@ -167,12 +143,7 @@ class PolicyHolderInsuree(object):
             dict_representation = model_to_dict(updated_phim)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return {
-                "success": False,
-                "message": "Failed to update PolicyHolderInsuree",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -180,14 +151,8 @@ class PolicyHolderInsuree(object):
             "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
         }
 
+    @check_authentication
     def delete(self, policy_holder_insuree):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-                "data": "",
-            }
         try:
             phim_to_delete = PolicyHolderInsureeModel.objects.filter(id=policy_holder_insuree['id']).first()
             phim_to_delete.delete(username=self.user.username)
@@ -197,37 +162,18 @@ class PolicyHolderInsuree(object):
                 "detail": "",
             }
         except Exception as exc:
-            return{
-                "success": False,
-                "message": "Failed to delete PolicyHolderInsuree",
-                "detail": str(exc),
-                "data": "",
-            }
+            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
 
+    @check_authentication
     def replace_policy_holder_insuree(self, policy_holder_insuree):
-        if type(self.user) is AnonymousUser or not self.user.id:
-            return {
-                "success": False,
-                "message": "Authentication required",
-                "detail": "PermissionDenied",
-                "data": "",
-            }
         try:
-            phim_to_replace = PolicyHolderInsureeModel._model.objects.filter(id=policy_holder_insuree['uuid']).first()
-            if phim_to_replace is None:
-                PolicyHolderInsureeModel._object_not_exist_exception(policy_holder_insuree['uuid'])
-            else:
-                phim_to_replace.replace_object(data=policy_holder_insuree, username=self.user.username)
+            phim_to_replace = PolicyHolderInsureeModel.objects.filter(id=policy_holder_insuree['uuid']).first()
+            phim_to_replace.replace_object(data=policy_holder_insuree, username=self.user.username)
             uuid_string = str(phim_to_replace.id)
             dict_representation = model_to_dict(phim_to_replace)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
         except Exception as exc:
-            return {
-                "success": False,
-                "message": "Failed to replace PolicyHolderInsuree",
-                "detail": str(exc),
-                "datas": "",
-            }
+            return _output_exception(model_name="PolicyHolderInsuree", exception=exc)
         return {
             "success": True,
             "message": "Ok",
@@ -237,44 +183,187 @@ class PolicyHolderInsuree(object):
         }
 
 
-@core.comparable
 class PolicyHolderContributionPlan(object):
 
-    def __init__(self, policy_holder):
-        self.policy_holder = policy_holder
-        pass
+    def __init__(self, user):
+        self.user = user
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+    @check_authentication
+    def get_by_id(self, by_policy_holder_contribution_plan):
+        try:
+            phcp = PolicyHolderContributionPlanModel.objects.get(id=by_policy_holder_contribution_plan.id)
+            uuid_string = str(phcp.id)
+            dict_representation = model_to_dict(phcp)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def create(self, contribution_plan):
-        pass
+    @check_authentication
+    def create(self, policy_holder_contribution_plan):
+        try:
+            print(policy_holder_contribution_plan)
+            phcp = PolicyHolderContributionPlanModel(**policy_holder_contribution_plan)
+            phcp.save(username=self.user.username)
+            uuid_string = str(phcp.id)
+            dict_representation = model_to_dict(phcp)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def update(self, contribution_plan):
-        pass
+    @check_authentication
+    def update(self, policy_holder_contribution_plan):
+        try:
+            updated_phcp = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['id']).first()
+            [setattr(updated_phcp, key, policy_holder_contribution_plan[key]) for key in policy_holder_contribution_plan]
+            updated_phcp.save(username=self.user.username)
+            uuid_string = str(updated_phcp.id)
+            dict_representation = model_to_dict(updated_phcp)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def delete(self, contribution_plan):
-        pass
+    @check_authentication
+    def delete(self, policy_holder_contribution_plan):
+        try:
+            phcp_to_delete = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['id']).first()
+            phcp_to_delete.delete(username=self.user.username)
+            return {
+                "success": True,
+                "message": "Ok",
+                "detail": "",
+            }
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
 
-    def replace_plan(self, contribution_plan):
-        pass
+    @check_authentication
+    def replace_policy_holder_contribution_plan_bundle(self, policy_holder_contribution_plan):
+        try:
+            phcp_to_replace = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['uuid']).first()
+            phcp_to_replace.replace_object(data=policy_holder_contribution_plan, username=self.user.username)
+            uuid_string = str(phcp_to_replace.id)
+            dict_representation = model_to_dict(phcp_to_replace)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderContributionPlan", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "old_object": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+            "uuid_new_object": str(phcp_to_replace.replacement_uuid),
+        }
 
 
-@core.comparable
 class PolicyHolderUser(object):
 
-    def __init__(self, policy_holder):
-        self.policy_holder = policy_holder
-        pass
+    def __init__(self, user):
+        self.user = user
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+    @check_authentication
+    def get_by_id(self, by_policy_holder_user):
+        try:
+            phu = PolicyHolderUserModel.objects.get(id=by_policy_holder_user.id)
+            uuid_string = str(phu.id)
+            dict_representation = model_to_dict(phu)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def create(self, user):
-        pass
+    @check_authentication
+    def create(self, policy_holder_user):
+        try:
+            phu = PolicyHolderUserModel(**policy_holder_user)
+            phu.save(username=self.user.username)
+            uuid_string = str(phu.id)
+            dict_representation = model_to_dict(phu)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def update(self, user):
-        pass
+    @check_authentication
+    def update(self, policy_holder_user):
+        try:
+            updated_phu = PolicyHolderUserModel.objects.filter(id=policy_holder_user['id']).first()
+            [setattr(updated_phu, key, policy_holder_user[key]) for key in policy_holder_user]
+            updated_phu.save(username=self.user.username)
+            uuid_string = str(updated_phu.id)
+            dict_representation = model_to_dict(updated_phu)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "data": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+        }
 
-    def delete(self, user):
-        pass
+    @check_authentication
+    def delete(self, policy_holder_user):
+        try:
+            phu_to_delete = PolicyHolderUserModel.objects.filter(id=policy_holder_user['id']).first()
+            phu_to_delete.delete(username=self.user.username)
+            return {
+                "success": True,
+                "message": "Ok",
+                "detail": "",
+            }
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+
+    @check_authentication
+    def replace_policy_holder_user(self, policy_holder_user):
+        try:
+            phu_to_replace = PolicyHolderUserModel.objects.filter(id=policy_holder_user['uuid']).first()
+            phu_to_replace.replace_object(data=policy_holder_user, username=self.user.username)
+            uuid_string = str(phu_to_replace.id)
+            dict_representation = model_to_dict(phu_to_replace)
+            dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
+        except Exception as exc:
+            return _output_exception(model_name="PolicyHolderUser", exception=exc)
+        return {
+            "success": True,
+            "message": "Ok",
+            "detail": "",
+            "old_object": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
+            "uuid_new_object": str(phu_to_replace.replacement_uuid),
+        }
+
+
+def _output_exception(model_name, exception):
+    return {
+        "success": False,
+        "message": "Failed to create "+model_name,
+        "detail": str(exception),
+        "data": "",
+    }
