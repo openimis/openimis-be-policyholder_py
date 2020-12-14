@@ -1,9 +1,4 @@
-import datetime
-import numbers
-import base64
-
-from unittest import TestCase, mock
-from uuid import UUID
+from unittest import TestCase
 from location.models import Location
 from insuree.models import Insuree
 from policyholder.services import PolicyHolder as PolicyHolderService, PolicyHolderInsuree as PolicyHolderInsureeService, \
