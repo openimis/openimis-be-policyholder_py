@@ -172,7 +172,6 @@ class PolicyHolderContributionPlan(object):
     @check_authentication
     def create(self, policy_holder_contribution_plan):
         try:
-            print(policy_holder_contribution_plan)
             phcp = PolicyHolderContributionPlanModel(**policy_holder_contribution_plan)
             phcp.save(username=self.user.username)
             uuid_string = str(phcp.id)
