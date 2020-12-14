@@ -307,6 +307,7 @@ def _output_exception(model_name, method, exception):
         "data": "",
     }
 
+
 def _output_result_success(dict_representation):
     return {
         "success": True,
