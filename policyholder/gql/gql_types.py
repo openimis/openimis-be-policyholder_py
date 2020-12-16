@@ -62,7 +62,7 @@ class PolicyHolderInsureeGQLType(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return PolicyHolder.get_queryset(queryset, info)
+        return PolicyHolderInsuree.get_queryset(queryset, info)
 
 
 class PolicyHolderContributionPlanGQLType(DjangoObjectType):
@@ -88,7 +88,7 @@ class PolicyHolderContributionPlanGQLType(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return PolicyHolder.get_queryset(queryset, info)
+        return PolicyHolderContributionPlan.get_queryset(queryset, info)
 
 
 class PolicyHolderUserGQLType(DjangoObjectType):
@@ -113,4 +113,4 @@ class PolicyHolderUserGQLType(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return PolicyHolder.get_queryset(queryset, info)
+        return PolicyHolderUser.get_queryset(queryset, info)
