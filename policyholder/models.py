@@ -70,8 +70,8 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
     insuree = models.ForeignKey(Insuree, db_column='InsureeId',
                                 on_delete=models.deletion.DO_NOTHING)
     contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContributionPlanBundleId',
-                                                 on_delete=models.deletion.DO_NOTHING)
-    last_policy = models.ForeignKey(Policy, db_column='LastPolicyId', on_delete=models.deletion.DO_NOTHING)
+                                                 on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
+    last_policy = models.ForeignKey(Policy, db_column='LastPolicyId', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
 
     objects = PolicyHolderInsureeManager()
 
