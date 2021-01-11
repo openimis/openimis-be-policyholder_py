@@ -28,7 +28,6 @@ setup(
         'openimis-be-location',
         'openimis-be-policy',
         'openimis-be-insuree',
-        'openimis-be-product',
         'openimis-be-contribution_plan'
     ],
     classifiers=[
