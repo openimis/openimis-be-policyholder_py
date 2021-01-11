@@ -14,7 +14,7 @@ from policyholder.gql.gql_mutations.update_mutations import UpdatePolicyHolderMu
 from policyholder.gql.gql_mutations.replace_mutation import ReplacePolicyHolderInsureeMutation, \
     ReplacePolicyHolderContributionPlanMutation, ReplacePolicyHolderUserMutation
 
-
+from policyholder.apps import PolicyholderConfig
 from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
     PolicyHolderContributionPlanGQLType
 
@@ -42,6 +42,9 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_policy_holder(self, info, **kwargs):
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
+           raise PermissionError("Unauthorized")
+
         filters = []
         parent_location = kwargs.get('parent_location')
         if parent_location is not None:
@@ -56,14 +59,23 @@ class Query(graphene.ObjectType):
         return gql_optimizer.query(PolicyHolder.objects.filter(*filters).all(), info)
 
     def resolve_policy_holder_insuree(self, info, **kwargs):
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_perms):
+           raise PermissionError("Unauthorized")
+
         query = PolicyHolderInsuree.objects
         return gql_optimizer.query(query.all(), info)
 
     def resolve_policy_holder_user(self, info, **kwargs):
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_perms):
+           raise PermissionError("Unauthorized")
+
         query = PolicyHolderUser.objects
         return gql_optimizer.query(query.all(), info)
 
     def resolve_policy_holder_contribution_plan_bundle(self, info, **kwargs):
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
+           raise PermissionError("Unauthorized")
+
         query = PolicyHolderContributionPlan.objects
         return gql_optimizer.query(query.all(), info)
 
