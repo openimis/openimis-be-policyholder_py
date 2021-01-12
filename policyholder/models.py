@@ -152,3 +152,47 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
 
     class Meta:
         db_table = 'tblPolicyHolderUser'
+
+
+class PolicyHolderMutation(core_models.UUIDModel):
+    policy_holder = models.ForeignKey(PolicyHolder, models.DO_NOTHING,
+                                 related_name='mutations')
+    mutation = models.ForeignKey(
+        core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder')
+
+    class Meta:
+        managed = True
+        db_table = "policy_holder_PolicyHolderMutation"
+
+
+class PolicyHolderInsureeMutation(core_models.UUIDModel):
+    policy_holder_insuree = models.ForeignKey(PolicyHolderInsuree, models.DO_NOTHING,
+                                 related_name='mutations')
+    mutation = models.ForeignKey(
+        core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_insuree')
+
+    class Meta:
+        managed = True
+        db_table = "policy_holder_insuree_PolicyHolderInsureeMutation"
+
+
+class PolicyHolderContributionPlanMutation(core_models.UUIDModel):
+    policy_holder_contribution_plan = models.ForeignKey(PolicyHolderContributionPlan, models.DO_NOTHING,
+                                 related_name='mutations')
+    mutation = models.ForeignKey(
+        core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_contribution_plan')
+
+    class Meta:
+        managed = True
+        db_table = "policy_holder_contribution_plan_PolicyHolderContributionPlanMutation"
+
+
+class PolicyHolderUserMutation(core_models.UUIDModel):
+    policy_holder_user = models.ForeignKey(PolicyHolderUser, models.DO_NOTHING,
+                                 related_name='mutations')
+    mutation = models.ForeignKey(
+        core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_user')
+
+    class Meta:
+        managed = True
+        db_table = "policy_holder_user_PolicyHolderUserMutation"

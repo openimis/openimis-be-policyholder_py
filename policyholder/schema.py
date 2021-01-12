@@ -3,8 +3,10 @@ import graphene_django_optimizer as gql_optimizer
 
 from django.db.models import Q
 from location.apps import LocationConfig
-from core.schema import OrderedDjangoFilterConnectionField
-from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, PolicyHolderContributionPlan
+from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
+from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
+    PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
+    PolicyHolderContributionPlanMutation, PolicyHolderUserMutation
 from policyholder.gql.gql_mutations.create_mutations import CreatePolicyHolderMutation, \
     CreatePolicyHolderInsureeMutation, CreatePolicyHolderUserMutation, CreatePolicyHolderContributionPlanMutation
 from policyholder.gql.gql_mutations.delete_mutations import DeletePolicyHolderMutation, \
@@ -99,3 +101,30 @@ class Mutation(graphene.ObjectType):
     replace_policy_holder_insuree = ReplacePolicyHolderInsureeMutation.Field()
     replace_policy_holder_user = ReplacePolicyHolderUserMutation.Field()
     replace_policy_holder_contribution_plan_bundle = ReplacePolicyHolderContributionPlanMutation.Field()
+
+
+def on_policy_holder_mutation(sender, **kwargs):
+    uuid = kwargs['data'].get('uuid', None)
+    if not uuid:
+        return []
+    if "PolicyHolderMutation" in str(sender._mutation_class):
+        impacted_policy_holder = PolicyHolder.objects.get(uuid=uuid)
+        PolicyHolderMutation.objects.create(
+            policy_holder=impacted_policy_holder, mutation_id=kwargs['mutation_log_id'])
+    if "PolicyHolderInsuree" in str(sender._mutation_class):
+        impacted_policy_holder_insuree = PolicyHolderInsuree.objects.get(uuid=uuid)
+        PolicyHolderInsureeMutation.objects.create(
+            policy_holder_insuree=impacted_policy_holder_insuree, mutation_id=kwargs['mutation_log_id'])
+    if "PolicyHolderContributionPlan" in str(sender._mutation_class):
+        impacted_policy_holder_contribution_plan = PolicyHolderContributionPlan.objects.get(uuid=uuid)
+        PolicyHolderContributionPlanMutation.objects.create(
+            policy_holder_contribution_plan=impacted_policy_holder_contribution_plan, mutation_id=kwargs['mutation_log_id'])
+    if "PolicyHolderUser" in str(sender._mutation_class):
+        impacted_policy_holder_user = PolicyHolderUser.objects.get(uuid=uuid)
+        PolicyHolderUserMutation.objects.create(
+            policy_holder_user=impacted_policy_holder_user, mutation_id=kwargs['mutation_log_id'])
+    return []
+
+
+def bind_signals():
+    signal_mutation_module_validate["policyholder"].connect(on_policy_holder_mutation)
