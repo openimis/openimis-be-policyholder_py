@@ -53,6 +53,8 @@ class PolicyHolderInsureeGQLType(DjangoObjectType):
             **prefix_filterset("contribution_plan_bundle__", ContributionPlanBundleGQLType._meta.filter_fields),
             "date_created": ["exact", "lt", "lte", "gt", "gte"],
             "date_updated": ["exact", "lt", "lte", "gt", "gte"],
+            "date_valid_from": ["exact", "lt", "lte", "gt", "gte"],
+            "date_valid_to": ["exact", "lt", "lte", "gt", "gte"],
             "user_created": ["exact"],
             "user_updated": ["exact"],
             "is_deleted": ["exact"]
