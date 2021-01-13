@@ -108,19 +108,19 @@ def on_policy_holder_mutation(sender, **kwargs):
     if not uuid:
         return []
     if "PolicyHolderMutation" in str(sender._mutation_class):
-        impacted_policy_holder = PolicyHolder.objects.get(uuid=uuid)
+        impacted_policy_holder = PolicyHolder.objects.get(id=uuid)
         PolicyHolderMutation.objects.create(
             policy_holder=impacted_policy_holder, mutation_id=kwargs['mutation_log_id'])
     if "PolicyHolderInsuree" in str(sender._mutation_class):
-        impacted_policy_holder_insuree = PolicyHolderInsuree.objects.get(uuid=uuid)
+        impacted_policy_holder_insuree = PolicyHolderInsuree.objects.get(id=uuid)
         PolicyHolderInsureeMutation.objects.create(
             policy_holder_insuree=impacted_policy_holder_insuree, mutation_id=kwargs['mutation_log_id'])
     if "PolicyHolderContributionPlan" in str(sender._mutation_class):
-        impacted_policy_holder_contribution_plan = PolicyHolderContributionPlan.objects.get(uuid=uuid)
+        impacted_policy_holder_contribution_plan = PolicyHolderContributionPlan.objects.get(id=uuid)
         PolicyHolderContributionPlanMutation.objects.create(
             policy_holder_contribution_plan=impacted_policy_holder_contribution_plan, mutation_id=kwargs['mutation_log_id'])
     if "PolicyHolderUser" in str(sender._mutation_class):
-        impacted_policy_holder_user = PolicyHolderUser.objects.get(uuid=uuid)
+        impacted_policy_holder_user = PolicyHolderUser.objects.get(id=uuid)
         PolicyHolderUserMutation.objects.create(
             policy_holder_user=impacted_policy_holder_user, mutation_id=kwargs['mutation_log_id'])
     return []
