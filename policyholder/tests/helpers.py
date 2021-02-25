@@ -53,7 +53,7 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
         contribution_plan_bundle = create_test_contribution_plan_bundle()
     if not last_policy:
         last_policy = create_test_policy(
-            product=create_test_product("TestCode"),
+            product=create_test_product("TestCode", custom_props={"insurance_period": 12, }),
             insuree=insuree)
 
     user = __get_or_create_simple_policy_holder_user()
@@ -97,6 +97,6 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
 
 def __get_or_create_simple_policy_holder_user():
     user = User.objects.get(username="admin")
-    #user, _ = User.objects.get_or_create(username='policy_holder_user',
+    # user, _ = User.objects.get_or_create(username='policy_holder_user',
     #                                  i_user=InteractiveUser.objects.first())
     return user
