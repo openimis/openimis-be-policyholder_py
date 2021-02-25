@@ -33,8 +33,7 @@ class ServiceTestPolicyHolder(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        ph_insuree = PolicyHolderInsuree.objects.get(policy_holder=cls.test_policy_holder)
-        PolicyHolderInsuree.objects.filter(id__in=[cls.test_policy_holder_insuree.id, ph_insuree.id]).delete()
+        PolicyHolderInsuree.objects.filter(id__in=[cls.test_policy_holder_insuree.id]).delete()
         PolicyHolder.objects.filter(id=cls.test_policy_holder.id).delete()
         ContributionPlanBundle.objects.filter(id__in=[cls.test_contribution_plan_bundle.id, cls.test_contribution_plan_bundle_to_replace.id]).delete()
 
@@ -336,7 +335,7 @@ class ServiceTestPolicyHolder(TestCase):
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
-
+        id_replaced = response['data']['id']
         policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['data']['id'])
         policy_holder_insuree = {
             'uuid': str(policy_holder_insuree_object.id),
@@ -344,10 +343,11 @@ class ServiceTestPolicyHolder(TestCase):
             'contribution_plan_bundle_id': self.test_contribution_plan_bundle_to_replace.id
         }
         response = self.policy_holder_insuree_service.replace_policy_holder_insuree(policy_holder_insuree)
+        policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['uuid_new_object'])
 
         # tear down the test data
         PolicyHolderInsuree.objects.filter(
-            id__in=[str(policy_holder_insuree_object.id), response['uuid_new_object']]
+            id__in=[id_replaced, response['uuid_new_object']]
         ).delete()
 
         self.assertEqual(
