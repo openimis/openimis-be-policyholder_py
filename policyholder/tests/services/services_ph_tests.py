@@ -343,7 +343,6 @@ class ServiceTestPolicyHolder(TestCase):
             'contribution_plan_bundle_id': self.test_contribution_plan_bundle_to_replace.id
         }
         response = self.policy_holder_insuree_service.replace_policy_holder_insuree(policy_holder_insuree)
-        policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['uuid_new_object'])
 
         # tear down the test data
         PolicyHolderInsuree.objects.filter(
