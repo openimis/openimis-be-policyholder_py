@@ -4,8 +4,12 @@ from insuree.models import Insuree
 from policyholder.services import PolicyHolder as PolicyHolderService, PolicyHolderInsuree as PolicyHolderInsureeService, \
     PolicyHolderContributionPlan as PolicyHolderContributionPlanService
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
+from policyholder.tests.helpers import create_test_policy_holder, create_test_policy_holder_insuree
+
 from contribution_plan.models import ContributionPlanBundle
+from contribution_plan.tests.helpers_tests import create_test_contribution_plan_bundle
 from policy.models import Policy
+from insuree.test_helpers import create_test_insuree
 from core.models import User
 
 
@@ -18,8 +22,22 @@ class ServiceTestPolicyHolder(TestCase):
         cls.policy_holder_insuree_service = PolicyHolderInsureeService(cls.user)
         cls.policy_holder_contribution_plan_service = PolicyHolderContributionPlanService(cls.user)
 
+        cls.test_policy_holder = create_test_policy_holder()
+        cls.test_policy_holder_insuree = create_test_policy_holder_insuree()
+
+        cls.test_insuree = cls.test_policy_holder_insuree.insuree
+        cls.test_insuree_to_change = create_test_insuree()
+        cls.test_contribution_plan_bundle = cls.test_policy_holder_insuree.contribution_plan_bundle
+        cls.test_last_policy = cls.test_policy_holder_insuree.last_policy
+        cls.test_contribution_plan_bundle_to_replace = create_test_contribution_plan_bundle()
+
+    @classmethod
+    def tearDownClass(cls):
+        PolicyHolderInsuree.objects.filter(id__in=[cls.test_policy_holder_insuree.id]).delete()
+        PolicyHolder.objects.filter(id=cls.test_policy_holder.id).delete()
+        ContributionPlanBundle.objects.filter(id__in=[cls.test_contribution_plan_bundle.id, cls.test_contribution_plan_bundle_to_replace.id]).delete()
+
     def test_policy_holder_create(self):
-        location = Location.objects.order_by('id').first()
         policy_holder = {
             'code': 'TT',
             'trade_name': 'COTO',
@@ -33,9 +51,12 @@ class ServiceTestPolicyHolder(TestCase):
             'accountancy_account': '128903719082739810273',
             'bank_account': "{ \"IBAN\": \"PL00 0000 2345 0000 1000 2345 2345\" }",
             'payment_reference': 'PolicyHolderPaymentReference',
-            'locations_id': location.id
         }
         response = self.policy_holder_service.create(policy_holder)
+
+        # tear down the test data
+        PolicyHolder.objects.filter(id=response["data"]["id"]).delete()
+
         self.assertEqual(
             (
                  True,
@@ -60,7 +81,6 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_create_update(self):
-        location = Location.objects.order_by('id').first()
         policy_holder = {
             'code': 'TT',
             'trade_name': 'COTO',
@@ -74,7 +94,6 @@ class ServiceTestPolicyHolder(TestCase):
             'accountancy_account': '128903719082739810273',
             'bank_account': "{ \"IBAN\": \"PL00 0000 2345 0000 1000 2345 2345\" }",
             'payment_reference': 'PolicyHolderPaymentReference',
-            'locations_id': location.id
         }
         response = self.policy_holder_service.create(policy_holder)
         policy_holder_object = PolicyHolder.objects.get(id=response['data']['id'])
@@ -84,6 +103,10 @@ class ServiceTestPolicyHolder(TestCase):
             'address': '{\"region\": \"TEST\", \"street\": \"TEST\"}',
         }
         response = self.policy_holder_service.update(policy_holder)
+
+        # tear down the test data
+        PolicyHolder.objects.filter(id=response["data"]["id"]).delete()
+
         self.assertEqual(
             (
                 True,
@@ -102,7 +125,7 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_update_without_changing_field(self):
-        policy_holder_object = PolicyHolder.objects.order_by('id').first()
+        policy_holder_object = self.test_policy_holder
         version = policy_holder_object.version
         policy_holder = {
             'id': str(policy_holder_object.id),
@@ -139,7 +162,6 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_create_delete(self):
-        location = Location.objects.order_by('id').first()
         policy_holder = {
             'code': 'TT',
             'trade_name': 'COTO',
@@ -153,7 +175,6 @@ class ServiceTestPolicyHolder(TestCase):
             'accountancy_account': '128903719082739810273',
             'bank_account': "{ \"IBAN\": \"PL00 0000 2345 0000 1000 2345 2345\" }",
             'payment_reference': 'PolicyHolderPaymentReference',
-            'locations_id': location.id
         }
         response = self.policy_holder_service.create(policy_holder)
         policy_holder_object = PolicyHolder.objects.get(id=response['data']['id'])
@@ -162,6 +183,10 @@ class ServiceTestPolicyHolder(TestCase):
             'id': str(policy_holder_object.id),
         }
         response = self.policy_holder_service.delete(policy_holder)
+
+        # tear down the test data
+        PolicyHolder.objects.filter(id=str(policy_holder_object.id)).delete()
+
         self.assertEqual(
             (
                 True,
@@ -176,19 +201,17 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_create(self):
-        insuree = Insuree.objects.order_by('id').first()
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-        last_policy = Policy.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'policy_holder_id': str(policy_holder.id),
-            'insuree_id': insuree.id,
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
-            'last_policy_id': last_policy.id
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'insuree_id': self.test_insuree.id,
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
+            'last_policy_id': self.test_last_policy.id
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
+
+        # tear down the test data
+        PolicyHolderInsuree.objects.filter(id=response["data"]["id"]).delete()
 
         self.assertEqual(
             (
@@ -196,10 +219,10 @@ class ServiceTestPolicyHolder(TestCase):
                 "Ok",
                 "",
                 1,
-                str(policy_holder.id),
-                insuree.id,
-                str(contribution_plan_bundle.id),
-                last_policy.id,
+                str(self.test_policy_holder.id),
+                self.test_insuree.id,
+                str(self.test_contribution_plan_bundle.id),
+                self.test_last_policy.id
             ),
             (
                 response['success'],
@@ -214,15 +237,8 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_create_without_fk(self):
-        insuree = Insuree.objects.order_by('id').first()
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-        last_policy = Policy.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'policy_holder_id': str(policy_holder.id),
-            'insuree_id': insuree.id,
-            'last_policy_id': last_policy.id
+            'policy_holder_id': str(self.test_policy_holder.id),
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -238,16 +254,11 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_create_update(self):
-        insuree = Insuree.objects.order_by('id').first()
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-        last_policy = Policy.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'policy_holder_id': str(policy_holder.id),
-            'insuree_id': insuree.id,
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
-            'last_policy_id': last_policy.id
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'insuree_id': self.test_insuree.id,
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
+            'last_policy_id': self.test_last_policy.id
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -255,15 +266,19 @@ class ServiceTestPolicyHolder(TestCase):
         policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['data']['id'])
         policy_holder_insuree = {
             'id': str(policy_holder_insuree_object.id),
-            'insuree_id': 2,
+            'insuree_id': self.test_insuree_to_change.id,
         }
         response = self.policy_holder_insuree_service.update(policy_holder_insuree)
+
+        # tear down the test data
+        PolicyHolderInsuree.objects.filter(id=response["data"]["id"]).delete()
+
         self.assertEqual(
             (
                 True,
                 "Ok",
                 "",
-                2,
+                self.test_insuree_to_change.id,
                 2,
             ),
             (
@@ -276,11 +291,9 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_update_without_changing_field(self):
-        policy_holder_insuree_object = PolicyHolderInsuree.objects.order_by('id').first()
-        insuree = Insuree.objects.order_by('id').first()
         policy_holder_insuree = {
-            'id': str(policy_holder_insuree_object.id),
-            'insuree_id': insuree.id,
+            'id': str(self.test_policy_holder_insuree.id),
+            'insuree_id': self.test_insuree.id,
         }
         response = self.policy_holder_insuree_service.update(policy_holder_insuree)
         self.assertEqual(
@@ -297,10 +310,8 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_update_without_id(self):
-        insuree = Insuree.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'insuree_id': insuree.id,
+            'insuree_id': self.test_insuree.id,
         }
 
         response = self.policy_holder_insuree_service.update(policy_holder_insuree)
@@ -316,55 +327,49 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_insuree_replace(self):
-        insuree = Insuree.objects.order_by('id').first()
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-        last_policy = Policy.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'policy_holder_id': str(policy_holder.id),
-            'insuree_id': insuree.id,
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
-            'last_policy_id': last_policy.id
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'insuree_id': self.test_insuree.id,
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
+            'last_policy_id': self.test_last_policy.id
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
-
+        id_replaced = response['data']['id']
         policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['data']['id'])
         policy_holder_insuree = {
             'uuid': str(policy_holder_insuree_object.id),
-            'insuree_id': 2,
+            'insuree_id': self.test_insuree_to_change.id,
+            'contribution_plan_bundle_id': self.test_contribution_plan_bundle_to_replace.id
         }
         response = self.policy_holder_insuree_service.replace_policy_holder_insuree(policy_holder_insuree)
-        policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['uuid_new_object'])
+
+        # tear down the test data
+        PolicyHolderInsuree.objects.filter(
+            id__in=[id_replaced, response['uuid_new_object']]
+        ).delete()
+
         self.assertEqual(
             (
                 True,
                 "Ok",
                 "",
                 response["old_object"]["replacement_uuid"],
-                2
             ),
             (
                 response['success'],
                 response['message'],
                 response['detail'],
                 response["uuid_new_object"],
-                policy_holder_insuree_object.insuree.id
             )
         )
 
     def test_policy_holder_insuree_replace_double(self):
-        insuree = Insuree.objects.order_by('id').first()
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-        last_policy = Policy.objects.order_by('id').first()
-
         policy_holder_insuree = {
-            'policy_holder_id': str(policy_holder.id),
-            'insuree_id': insuree.id,
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
-            'last_policy_id': last_policy.id
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'insuree_id': self.test_insuree.id,
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
+            'last_policy_id': self.test_last_policy.id
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -372,17 +377,25 @@ class ServiceTestPolicyHolder(TestCase):
         policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['data']['id'])
         policy_holder_insuree = {
             'uuid': str(policy_holder_insuree_object.id),
-            'insuree_id': 2,
+            'insuree_id': self.test_insuree_to_change.id,
+            'contribution_plan_bundle_id': self.test_contribution_plan_bundle_to_replace.id
         }
+        id_first_object = str(policy_holder_insuree_object.id)
         response = self.policy_holder_insuree_service.replace_policy_holder_insuree(policy_holder_insuree)
 
         policy_holder_insuree_object = PolicyHolderInsuree.objects.get(id=response['uuid_new_object'])
         policy_holder_insuree = {
             'uuid': str(policy_holder_insuree_object.id),
-            'insuree_id': 1,
+            'insuree_id': self.test_insuree.id,
+            'contribution_plan_bundle_id': self.test_contribution_plan_bundle.id
         }
 
         response = self.policy_holder_insuree_service.replace_policy_holder_insuree(policy_holder_insuree)
+
+        # tear down the test data
+        PolicyHolderInsuree.objects.filter(
+            id__in=[str(policy_holder_insuree_object.id), response['uuid_new_object'], id_first_object]
+        ).delete()
 
         self.assertEqual(
             (
@@ -400,15 +413,15 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_contribution_plan_create(self):
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-
         policy_holder_contribution_plan = {
-            'policy_holder_id': str(policy_holder.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
         }
 
         response = self.policy_holder_contribution_plan_service.create(policy_holder_contribution_plan)
+
+        # tear down the test data
+        PolicyHolderContributionPlan.objects.filter(id=response["data"]["id"]).delete()
 
         self.assertEqual(
             (
@@ -416,8 +429,8 @@ class ServiceTestPolicyHolder(TestCase):
                 "Ok",
                 "",
                 1,
-                str(policy_holder.id),
-                str(contribution_plan_bundle.id),
+                str(self.test_policy_holder.id),
+                str(self.test_contribution_plan_bundle.id),
             ),
             (
                 response['success'],
@@ -430,10 +443,8 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_contribution_plan_create_without_fk(self):
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-
         policy_holder_contribution_plan = {
-            'policy_holder_id': str(policy_holder.id),
+            'policy_holder_id': str(self.test_policy_holder.id),
         }
 
         response = self.policy_holder_contribution_plan_service.create(policy_holder_contribution_plan)
@@ -448,46 +459,28 @@ class ServiceTestPolicyHolder(TestCase):
             )
         )
 
-    def test_policy_holder_contribution_plan_update_without_id(self):
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-
-        policy_holder_contribution_plan = {
-            'policyholder_id': policy_holder.id,
-        }
-
-        response = self.policy_holder_contribution_plan_service.update(policy_holder_contribution_plan)
-        self.assertEqual(
-            (
-                False,
-                "Failed to update PolicyHolderContributionPlan",
-            ),
-            (
-                response['success'],
-                response['message'],
-            )
-        )
-
     def test_policy_holder_contribution_plan_replace(self):
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-
         policy_holder_contribution_plan = {
-            'policy_holder_id': str(policy_holder.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
         }
 
         response = self.policy_holder_contribution_plan_service.create(policy_holder_contribution_plan)
 
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('-id').first()
         policy_holder_contribution_plan_object = PolicyHolderContributionPlan.objects.get(id=response['data']['id'])
         policy_holder_contribution_plan = {
             'uuid': str(policy_holder_contribution_plan_object.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle_to_replace.id),
         }
 
         response = self.policy_holder_contribution_plan_service.replace_policy_holder_contribution_plan_bundle(
             policy_holder_contribution_plan
         )
+
+        # tear down the test data
+        PolicyHolderContributionPlan.objects.filter(
+            id__in=[str(policy_holder_contribution_plan_object.id), response['uuid_new_object']]
+        ).delete()
 
         self.assertEqual(
             (
@@ -505,23 +498,19 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_contribution_plan_replace_double(self):
-        policy_holder = PolicyHolder.objects.order_by('id').first()
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('id').first()
-
         policy_holder_contribution_plan = {
-            'policy_holder_id': str(policy_holder.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'policy_holder_id': str(self.test_policy_holder.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
         }
 
         response = self.policy_holder_contribution_plan_service.create(policy_holder_contribution_plan)
 
-        contribution_plan_bundle = ContributionPlanBundle.objects.order_by('-id').first()
         policy_holder_contribution_plan_object = PolicyHolderContributionPlan.objects.get(id=response['data']['id'])
         policy_holder_contribution_plan = {
             'uuid': str(policy_holder_contribution_plan_object.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle_to_replace.id),
         }
-
+        id_first_object = str(policy_holder_contribution_plan_object.id)
         response = self.policy_holder_contribution_plan_service.replace_policy_holder_contribution_plan_bundle(
             policy_holder_contribution_plan
         )
@@ -529,9 +518,14 @@ class ServiceTestPolicyHolder(TestCase):
         policy_holder_contribution_plan_object = PolicyHolderContributionPlan.objects.get(id=response['uuid_new_object'])
         policy_holder_contribution_plan = {
             'uuid': str(policy_holder_contribution_plan_object.id),
-            'contribution_plan_bundle_id': str(contribution_plan_bundle.id),
+            'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
         }
         response = self.policy_holder_contribution_plan_service.replace_policy_holder_contribution_plan_bundle(policy_holder_contribution_plan)
+
+        # tear down the test data
+        PolicyHolderContributionPlan.objects.filter(
+            id__in=[str(policy_holder_contribution_plan_object.id), response['uuid_new_object'], id_first_object]
+        ).delete()
 
         self.assertEqual(
             (
