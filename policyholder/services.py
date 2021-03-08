@@ -9,6 +9,7 @@ from django.core import serializers
 from django.forms.models import model_to_dict
 from policyholder.models import PolicyHolder as PolicyHolderModel, PolicyHolderUser as PolicyHolderUserModel, \
     PolicyHolderContributionPlan as PolicyHolderContributionPlanModel, PolicyHolderInsuree as PolicyHolderInsureeModel
+from policyholder.validation import PolicyHolderValidation
 
 
 def check_authentication(function):
@@ -44,6 +45,7 @@ class PolicyHolder(object):
     @check_authentication
     def create(self, policy_holder):
         try:
+            PolicyHolderValidation.validate_create(self.user, **policy_holder)
             phm = PolicyHolderModel(**policy_holder)
             phm.save(username=self.user.username)
             uuid_string = str(phm.id)
@@ -56,6 +58,7 @@ class PolicyHolder(object):
     @check_authentication
     def update(self, policy_holder):
         try:
+            PolicyHolderValidation.validate_update(self.user, **policy_holder)
             updated_phm = PolicyHolderModel.objects.filter(id=policy_holder['id']).first()
             [setattr(updated_phm, key, policy_holder[key]) for key in policy_holder]
             updated_phm.save(username=self.user.username)
