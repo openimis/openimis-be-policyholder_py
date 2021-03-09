@@ -2,6 +2,7 @@ from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelC
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
+from policyholder.validation import PolicyHolderValidation
 
 
 class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
@@ -11,6 +12,11 @@ class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutati
 
     class Input(PolicyHolderInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PolicyHolderValidation.validate_create(user, **data)
 
 
 class CreatePolicyHolderInsureeMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):

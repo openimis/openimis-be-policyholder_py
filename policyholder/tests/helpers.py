@@ -12,10 +12,7 @@ from datetime import date
 from product.test_helpers import create_test_product
 
 
-def create_test_policy_holder(locations=None, custom_props={}):
-    user = __get_or_create_simple_policy_holder_user()
-
-    object_data = {
+PH_DATA = {
         'code': 'PHCode',
         'trade_name': 'CompanyTest',
         'address': '{\"region\": \"APAC\", \"street\": \"test\"}',
@@ -29,6 +26,14 @@ def create_test_policy_holder(locations=None, custom_props={}):
         'bank_account': "{ \"IBAN\": \"PL00 0000 2345 0000 1000 2345 2345\" }",
         'payment_reference': 'PolicyHolderPaymentReference',
         'json_ext': json.dumps("{}"),
+}
+
+
+def create_test_policy_holder(locations=None, custom_props={}):
+    user = __get_or_create_simple_policy_holder_user()
+
+    object_data = {
+        **PH_DATA,
         **custom_props
     }
 
