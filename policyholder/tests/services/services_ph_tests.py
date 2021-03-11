@@ -1,7 +1,6 @@
-from unittest import TestCase
+from django.test import TestCase
 
 from django.core.exceptions import ValidationError
-from django.test import TransactionTestCase
 from location.models import Location
 from insuree.models import Insuree
 from policyholder.services import PolicyHolder as PolicyHolderService, PolicyHolderInsuree as PolicyHolderInsureeService, \
@@ -38,8 +37,9 @@ class ServiceTestPolicyHolder(TestCase):
     @classmethod
     def setUpClass(cls):
         PolicyHolder.objects.filter(code=cls.POLICY_HOLDER['code']).delete()
-
-        cls.user = User.objects.get(username="admin")
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser(username='admin', password='S\/pe®Pąßw0rd™')
+        cls.user = User.objects.filter(username='admin').first()
         cls.policy_holder_service = PolicyHolderService(cls.user)
         cls.policy_holder_insuree_service = PolicyHolderInsureeService(cls.user)
         cls.policy_holder_contribution_plan_service = PolicyHolderContributionPlanService(cls.user)

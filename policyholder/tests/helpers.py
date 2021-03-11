@@ -101,7 +101,7 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
 
 
 def __get_or_create_simple_policy_holder_user():
-    user = User.objects.get(username="admin")
-    # user, _ = User.objects.get_or_create(username='policy_holder_user',
-    #                                  i_user=InteractiveUser.objects.first())
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser(username='admin', password='S\/pe®Pąßw0rd™')
+    user = User.objects.filter(username='admin').first()
     return user
