@@ -1,5 +1,5 @@
 from functools import lru_cache
-from unittest import TestCase
+from django.test import TestCase
 
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser
 from policyholder.tests import create_test_policy_holder, create_test_policy_holder_insuree, \
