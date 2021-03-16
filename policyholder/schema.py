@@ -4,7 +4,7 @@ import graphene_django_optimizer as gql_optimizer
 from django.db.models import Q
 from location.apps import LocationConfig
 from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
-from core.utils import filter_validity_business_model
+from core.utils import append_validity_filter
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
     PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
     PolicyHolderContributionPlanMutation, PolicyHolderUserMutation
@@ -144,19 +144,3 @@ def on_policy_holder_mutation(sender, **kwargs):
 
 def bind_signals():
     signal_mutation_module_validate["policyholder"].connect(on_policy_holder_mutation)
-
-
-def append_validity_filter(**kwargs):
-    default_filter = kwargs.get('setDefaultFilter', False)
-    date_valid_from = kwargs.get('dateValidFrom__Gte', None)
-    date_valid_to = kwargs.get('dateValidTo__Lte', None)
-    filters = []
-    # check if we can use default filter validity
-    if date_valid_from is None and date_valid_to is None:
-        if default_filter:
-            filters = [*filter_validity_business_model(**kwargs)]
-        else:
-            filters = []
-    else:
-        filters = [*filter_validity_business_model(**kwargs)]
-    return filters
