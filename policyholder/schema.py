@@ -4,7 +4,7 @@ import graphene_django_optimizer as gql_optimizer
 from django.db.models import Q
 from location.apps import LocationConfig
 from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
-from core.utils import filter_validity_business_model
+from core.utils import append_validity_filter
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
     PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
     PolicyHolderContributionPlanMutation, PolicyHolderUserMutation
@@ -28,35 +28,39 @@ class Query(graphene.ObjectType):
         parent_location_level=graphene.Int(),
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
-        dateValidTo__Lte=graphene.DateTime()
+        dateValidTo__Lte=graphene.DateTime(),
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_insuree = OrderedDjangoFilterConnectionField(
         PolicyHolderInsureeGQLType,
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
-        dateValidTo__Lte=graphene.DateTime()
+        dateValidTo__Lte=graphene.DateTime(),
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_user = OrderedDjangoFilterConnectionField(
         PolicyHolderUserGQLType,
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
-        dateValidTo__Lte=graphene.DateTime()
+        dateValidTo__Lte=graphene.DateTime(),
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_contribution_plan_bundle = OrderedDjangoFilterConnectionField(
         PolicyHolderContributionPlanGQLType,
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
-        dateValidTo__Lte=graphene.DateTime()
+        dateValidTo__Lte=graphene.DateTime(),
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     def resolve_policy_holder(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
            raise PermissionError("Unauthorized")
 
-        filters = [*filter_validity_business_model(**kwargs)]
+        filters = append_validity_filter(**kwargs)
         parent_location = kwargs.get('parent_location')
         if parent_location is not None:
             parent_location_level = kwargs.get('parent_location_level')
@@ -73,22 +77,25 @@ class Query(graphene.ObjectType):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_perms):
            raise PermissionError("Unauthorized")
 
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderInsuree.objects
-        return gql_optimizer.query(query.filter(*filter_validity_business_model(**kwargs)).all(), info)
+        return gql_optimizer.query(query.filter(*filters).all(), info)
 
     def resolve_policy_holder_user(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_perms):
            raise PermissionError("Unauthorized")
 
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderUser.objects
-        return gql_optimizer.query(query.filter(*filter_validity_business_model(**kwargs)).all(), info)
+        return gql_optimizer.query(query.filter(*filters).all(), info)
 
     def resolve_policy_holder_contribution_plan_bundle(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
            raise PermissionError("Unauthorized")
 
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderContributionPlan.objects
-        return gql_optimizer.query(query.filter(*filter_validity_business_model(**kwargs)).all(), info)
+        return gql_optimizer.query(query.filter(*filters).all(), info)
 
 
 class Mutation(graphene.ObjectType):
