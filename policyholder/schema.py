@@ -60,18 +60,7 @@ class Query(graphene.ObjectType):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
            raise PermissionError("Unauthorized")
 
-        default_filter = kwargs.get('setDefaultFilter', True)
-        date_valid_from = kwargs.get('dateValidFrom__Gte', None)
-        date_valid_to = kwargs.get('dateValidTo__Lte', None)
-        # check if we can use default filter validity
-        if date_valid_from is None and date_valid_to is None:
-            if default_filter:
-                filters = [*filter_validity_business_model(**kwargs)]
-            else:
-                filters = []
-        else:
-            filters = [*filter_validity_business_model(**kwargs)]
-
+        filters = append_validity_filter(**kwargs)
         parent_location = kwargs.get('parent_location')
         if parent_location is not None:
             parent_location_level = kwargs.get('parent_location_level')
@@ -88,18 +77,7 @@ class Query(graphene.ObjectType):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_perms):
            raise PermissionError("Unauthorized")
 
-        default_filter = kwargs.get('setDefaultFilter', True)
-        date_valid_from = kwargs.get('dateValidFrom__Gte', None)
-        date_valid_to = kwargs.get('dateValidTo__Lte', None)
-        # check if we can use default filter validity
-        if date_valid_from is None and date_valid_to is None:
-            if default_filter:
-                filters = [*filter_validity_business_model(**kwargs)]
-            else:
-                filters = []
-        else:
-            filters = [*filter_validity_business_model(**kwargs)]
-
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderInsuree.objects
         return gql_optimizer.query(query.filter(*filters).all(), info)
 
@@ -107,18 +85,7 @@ class Query(graphene.ObjectType):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_perms):
            raise PermissionError("Unauthorized")
 
-        default_filter = kwargs.get('setDefaultFilter', True)
-        date_valid_from = kwargs.get('dateValidFrom__Gte', None)
-        date_valid_to = kwargs.get('dateValidTo__Lte', None)
-        # check if we can use default filter validity
-        if date_valid_from is None and date_valid_to is None:
-            if default_filter:
-                filters = [*filter_validity_business_model(**kwargs)]
-            else:
-                filters = []
-        else:
-            filters = [*filter_validity_business_model(**kwargs)]
-
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderUser.objects
         return gql_optimizer.query(query.filter(*filters).all(), info)
 
@@ -126,18 +93,7 @@ class Query(graphene.ObjectType):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
            raise PermissionError("Unauthorized")
 
-        default_filter = kwargs.get('setDefaultFilter', True)
-        date_valid_from = kwargs.get('dateValidFrom__Gte', None)
-        date_valid_to = kwargs.get('dateValidTo__Lte', None)
-        # check if we can use default filter validity
-        if date_valid_from is None and date_valid_to is None:
-            if default_filter:
-                filters = [*filter_validity_business_model(**kwargs)]
-            else:
-                filters = []
-        else:
-            filters = [*filter_validity_business_model(**kwargs)]
-
+        filters = append_validity_filter(**kwargs)
         query = PolicyHolderContributionPlan.objects
         return gql_optimizer.query(query.filter(*filters).all(), info)
 
@@ -188,3 +144,19 @@ def on_policy_holder_mutation(sender, **kwargs):
 
 def bind_signals():
     signal_mutation_module_validate["policyholder"].connect(on_policy_holder_mutation)
+
+
+def append_validity_filter(**kwargs):
+    default_filter = kwargs.get('setDefaultFilter', False)
+    date_valid_from = kwargs.get('dateValidFrom__Gte', None)
+    date_valid_to = kwargs.get('dateValidTo__Lte', None)
+    filters = []
+    # check if we can use default filter validity
+    if date_valid_from is None and date_valid_to is None:
+        if default_filter:
+            filters = [*filter_validity_business_model(**kwargs)]
+        else:
+            filters = []
+    else:
+        filters = [*filter_validity_business_model(**kwargs)]
+    return filters
