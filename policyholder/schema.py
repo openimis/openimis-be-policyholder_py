@@ -29,7 +29,7 @@ class Query(graphene.ObjectType):
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
-        setDefaultFilter=graphene.Boolean()
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_insuree = OrderedDjangoFilterConnectionField(
@@ -37,7 +37,7 @@ class Query(graphene.ObjectType):
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
-        setDefaultFilter=graphene.Boolean()
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_user = OrderedDjangoFilterConnectionField(
@@ -45,7 +45,7 @@ class Query(graphene.ObjectType):
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
-        setDefaultFilter=graphene.Boolean()
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     policy_holder_contribution_plan_bundle = OrderedDjangoFilterConnectionField(
@@ -53,7 +53,7 @@ class Query(graphene.ObjectType):
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
-        setDefaultFilter=graphene.Boolean()
+        applyDefaultValidityFilter=graphene.Boolean()
     )
 
     def resolve_policy_holder(self, info, **kwargs):
