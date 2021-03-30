@@ -3,7 +3,8 @@ import graphene_django_optimizer as gql_optimizer
 
 from django.db.models import Q
 from location.apps import LocationConfig
-from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
+from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate, \
+    signal_mutation_module_before_mutating
 from core.utils import append_validity_filter
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
     PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
@@ -21,6 +22,10 @@ from policyholder.apps import PolicyholderConfig
 from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
     PolicyHolderContributionPlanGQLType
 
+from payment.signals import signal_before_payment_query
+from .signals import append_policy_holder_filter
+
+
 class Query(graphene.ObjectType):
     policy_holder = OrderedDjangoFilterConnectionField(
         PolicyHolderGQLType,
@@ -29,7 +34,7 @@ class Query(graphene.ObjectType):
         orderBy=graphene.List(of_type=graphene.String),
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
-        applyDefaultValidityFilter=graphene.Boolean()
+        applyDefaultValidityFilter=graphene.Boolean(),
     )
 
     policy_holder_insuree = OrderedDjangoFilterConnectionField(
@@ -144,3 +149,4 @@ def on_policy_holder_mutation(sender, **kwargs):
 
 def bind_signals():
     signal_mutation_module_validate["policyholder"].connect(on_policy_holder_mutation)
+    signal_before_payment_query.connect(append_policy_holder_filter)

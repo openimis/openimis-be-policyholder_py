@@ -65,3 +65,11 @@ It is dedicated to be deployed as a module of [openimis-be_py](https://github.co
 * gql_mutation_update_policyholdercontributionplan_perms: required rights to call updatePolicyHolderContributionPlanBundle GraphQL Mutation (default: ["150403"]),
 * gql_mutation_delete_policyholdercontributionplan_perms: required rights to call deletePolicyHolderContributionPlanBundle GraphQL Mutation (default: ["150404"]),
 * gql_mutation_replace_policyholdercontributionplan_perms: required rights to call replacePolicyHolderContributionPlanBundle GraphQL Mutation (default: ["150406"]),
+
+## openIMIS Modules Dependencies
+- core.models.HistoryBusinessModel
+- contribution_plan.models.ContributionPlanBundle
+- insuree.models.Insuree
+- location.models.Location
+- policy.models.Policy
+- payment.models.Payment
