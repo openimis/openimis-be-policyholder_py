@@ -3,8 +3,7 @@ import graphene_django_optimizer as gql_optimizer
 
 from django.db.models import Q
 from location.apps import LocationConfig
-from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate, \
-    signal_mutation_module_before_mutating
+from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
 from core.utils import append_validity_filter
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
     PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
