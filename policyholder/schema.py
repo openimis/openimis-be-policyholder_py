@@ -62,7 +62,8 @@ class Query(graphene.ObjectType):
 
     def resolve_policy_holder(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
-           raise PermissionError("Unauthorized")
+            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_portal_perms):
+                raise PermissionError("Unauthorized")
 
         filters = append_validity_filter(**kwargs)
         parent_location = kwargs.get('parent_location')
@@ -79,7 +80,8 @@ class Query(graphene.ObjectType):
 
     def resolve_policy_holder_insuree(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_perms):
-           raise PermissionError("Unauthorized")
+            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_portal_perms):
+                raise PermissionError("Unauthorized")
 
         filters = append_validity_filter(**kwargs)
         query = PolicyHolderInsuree.objects
@@ -87,7 +89,8 @@ class Query(graphene.ObjectType):
 
     def resolve_policy_holder_user(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_perms):
-           raise PermissionError("Unauthorized")
+            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_portal_perms):
+                raise PermissionError("Unauthorized")
 
         filters = append_validity_filter(**kwargs)
         query = PolicyHolderUser.objects
@@ -95,7 +98,8 @@ class Query(graphene.ObjectType):
 
     def resolve_policy_holder_contribution_plan_bundle(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
-           raise PermissionError("Unauthorized")
+            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms):
+                raise PermissionError("Unauthorized")
 
         filters = append_validity_filter(**kwargs)
         query = PolicyHolderContributionPlan.objects
