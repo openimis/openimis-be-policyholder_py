@@ -26,6 +26,7 @@ setup(
         'djangorestframework',
         'openimis-be-core',
         'openimis-be-location',
+        'openimis-be-payment',
         'openimis-be-policy',
         'openimis-be-insuree',
         'openimis-be-contribution_plan'
