@@ -28,6 +28,20 @@ DEFAULT_CFG = {
     "gql_mutation_update_policyholdercontributionplan_perms": ["150403"],
     "gql_mutation_delete_policyholdercontributionplan_perms": ["150404"],
     "gql_mutation_replace_policyholdercontributionplan_perms": ["150406"],
+    # OFS-260: Support the policyholder portal perms on Policyholder
+    "gql_query_policyholder_portal_perms": ["154001"],
+    "gql_query_policyholderinsuree_portal_perms": ["154101"],
+    "gql_query_policyholdercontributionplanbundle_portal_perms": ["154601"],
+    "gql_query_policyholderuser_portal_perms": ["154401"],
+    "gql_query_payment_portal_perms": ["154501"],
+    "gql_mutation_create_policyholderinsuree_portal_perms": ["154102"],
+    "gql_mutation_update_policyholderinsuree_portal_perms": ["154103"],
+    "gql_mutation_delete_policyholderinsuree_portal_perms": ["154104"],
+    "gql_mutation_replace_policyholderinsuree_portal_perms": ["154106"],
+    "gql_mutation_create_policyholderuser_portal_perms": ["154402"],
+    "gql_mutation_update_policyholderuser_portal_perms": ["154403"],
+    "gql_mutation_delete_policyholderuser_portal_perms": ["154404"],
+    "gql_mutation_replace_policyholderuser_portal_perms": ["154406"],
 }
 
 
@@ -57,6 +71,20 @@ class PolicyholderConfig(AppConfig):
     gql_mutation_update_policyholdercontributionplan_perms = []
     gql_mutation_delete_policyholdercontributionplan_perms = []
     gql_mutation_replace_policyholdercontributionplan_perms = []
+    # OFS-260: Support the policyholder portal perms on Policyholder
+    gql_query_policyholder_portal_perms = []
+    gql_query_policyholderinsuree_portal_perms = []
+    gql_query_policyholdercontributionplanbundle_portal_perms = []
+    gql_query_policyholderuser_portal_perms = []
+    gql_query_payment_portal_perms = []
+    gql_mutation_create_policyholderinsuree_portal_perms = []
+    gql_mutation_update_policyholderinsuree_portal_perms = []
+    gql_mutation_delete_policyholderinsuree_portal_perms = []
+    gql_mutation_replace_policyholderinsuree_portal_perms = []
+    gql_mutation_create_policyholderuser_portal_perms = []
+    gql_mutation_update_policyholderuser_portal_perms = []
+    gql_mutation_delete_policyholderuser_portal_perms = []
+    gql_mutation_replace_policyholderuser_portal_perms = []
 
     def _configure_permissions(self, cfg):
         PolicyholderConfig.gql_query_policyholder_perms = cfg[
@@ -105,6 +133,34 @@ class PolicyholderConfig(AppConfig):
             "gql_mutation_delete_policyholdercontributionplan_perms"]
         PolicyholderConfig.gql_mutation_replace_policyholdercontributionplan_perms = cfg[
             "gql_mutation_replace_policyholdercontributionplan_perms"]
+        # OFS-260: Support the policyholder portal perms on Policyholder
+        PolicyholderConfig.gql_query_policyholder_portal_perms = cfg[
+            "gql_query_policyholder_portal_perms"]
+        PolicyholderConfig.gql_query_policyholderinsuree_portal_perms = cfg[
+            "gql_query_policyholderinsuree_portal_perms"]
+        PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms = cfg[
+            "gql_query_policyholdercontributionplanbundle_portal_perms"]
+        PolicyholderConfig.gql_query_policyholderuser_portal_perms = cfg[
+            "gql_query_policyholderuser_portal_perms"]
+        PolicyholderConfig.gql_query_payment_portal_perms = cfg[
+            "gql_query_payment_portal_perms"]
+        PolicyholderConfig.gql_mutation_create_policyholderinsuree_portal_perms = cfg[
+            "gql_mutation_create_policyholderinsuree_portal_perms"]
+        PolicyholderConfig.gql_mutation_update_policyholderinsuree_portal_perms = cfg[
+            "gql_mutation_update_policyholderinsuree_portal_perms"]
+        PolicyholderConfig.gql_mutation_delete_policyholderinsuree_portal_perms = cfg[
+            "gql_mutation_delete_policyholderinsuree_portal_perms"]
+        PolicyholderConfig.gql_mutation_replace_policyholderinsuree_portal_perms = cfg[
+            "gql_mutation_replace_policyholderinsuree_portal_perms"]
+        PolicyholderConfig.gql_mutation_create_policyholderuser_portal_perms = cfg[
+            "gql_mutation_create_policyholderuser_portal_perms"]
+        PolicyholderConfig.gql_mutation_update_policyholderuser_portal_perms = cfg[
+            "gql_mutation_update_policyholderuser_portal_perms"]
+        PolicyholderConfig.gql_mutation_delete_policyholderuser_portal_perms = cfg[
+            "gql_mutation_delete_policyholderuser_portal_perms"]
+        PolicyholderConfig.gql_mutation_replace_policyholderuser_portal_perms = cfg[
+            "gql_mutation_replace_policyholderuser_portal_perms"]
+
 
     def ready(self):
         from core.models import ModuleConfiguration
