@@ -2,6 +2,7 @@ from django.db.models import Q
 from payment.apps import PaymentConfig
 from payment.models import Payment
 from .apps import PolicyholderConfig
+from .models import PolicyHolderUser
 
 
 def append_policy_holder_filter(sender, **kwargs):
@@ -12,4 +13,7 @@ def append_policy_holder_filter(sender, **kwargs):
         # then check perms
         if user.has_perms(PaymentConfig.gql_query_payments_perms) or user.has_perms(PolicyholderConfig.gql_query_payment_portal_perms):
             ph_id = additional_filter["policyHolder"]
-            return Q(payment_details__premium__contract_contribution_plan_details__contract_details__contract__policy_holder__id=ph_id)
+            # check if user is linked to ph in policy holder user table
+            ph_user = PolicyHolderUser.objects.filter(Q(policy_holder__id=ph_id, user=user)).first()
+            if ph_user:
+                return Q(payment_details__premium__contract_contribution_plan_details__contract_details__contract__policy_holder__id=ph_id)
