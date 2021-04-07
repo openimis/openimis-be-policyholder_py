@@ -63,7 +63,7 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
             user = User.objects.filter(i_user__uuid=object_data["user_id"]).first()
             if user:
                 object_data.pop('user_id')
-                object_data["user_id"] = user.uuid
+                object_data["user_id"] = user.id
                 obj = cls._model(**object_data)
                 obj.save(username=user.username)
                 return obj
