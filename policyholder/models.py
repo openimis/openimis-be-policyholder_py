@@ -132,7 +132,7 @@ class PolicyHolderUserManager(models.Manager):
 
 
 class PolicyHolderUser(core_models.HistoryBusinessModel):
-    user = models.ForeignKey(core_models.User, db_column='UserUUID',
+    user = models.ForeignKey(core_models.InteractiveUser, db_column='UserID',
                                                  on_delete=models.deletion.DO_NOTHING)
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
