@@ -1,5 +1,5 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
-from core.models import User, InteractiveUser
+from core.models import InteractiveUser
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
@@ -55,18 +55,13 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
     @classmethod
     def create_policy_holder_user(cls, user, object_data):
         interactive_user = InteractiveUser.objects.filter(uuid=object_data["user_id"]).first()
-        if not interactive_user:
+        if interactive_user:
+            id_user_i = interactive_user.id
+            object_data.pop('user_id')
+            object_data["user_id"] = id_user_i
             obj = cls._model(**object_data)
             obj.save(username=user.username)
             return obj
-        else:
-            user = User.objects.filter(i_user__uuid=object_data["user_id"]).first()
-            if user:
-                object_data.pop('user_id')
-                object_data["user_id"] = user.id
-                obj = cls._model(**object_data)
-                obj.save(username=user.username)
-                return obj
 
     class Input(PolicyHolderUserInputType):
         pass
