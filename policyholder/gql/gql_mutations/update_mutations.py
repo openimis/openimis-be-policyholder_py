@@ -1,4 +1,5 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
+from core.models import InteractiveUser
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInsureeUpdateInputType, \
     PolicyHolderContributionPlanUpdateInputType, PolicyHolderUserUpdateInputType, PolicyHolderUpdateInputType
@@ -41,6 +42,27 @@ class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMu
     _mutation_class = "PolicyHolderUserMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderUser
+
+    @classmethod
+    def _mutate(cls, user, **data):
+        if "client_mutation_id" in data:
+            data.pop('client_mutation_id')
+        if "client_mutation_label" in data:
+            data.pop('client_mutation_label')
+        if "user_id" in data:
+            interactive_user = InteractiveUser.objects.filter(uuid=data["user_id"]).first()
+            if interactive_user:
+                id_user_i = interactive_user.id
+                data.pop('user_id')
+                data["user_id"] = id_user_i
+        updated_object = cls._model.objects.filter(id=data['id']).first()
+        [setattr(updated_object, key, data[key]) for key in data]
+        cls.update_policy_holder_user(user=user, object_to_update=updated_object)
+
+    @classmethod
+    def update_policy_holder_user(cls, user, object_to_update):
+        object_to_update.save(username=user.username)
+        return object_to_update
 
     class Input(PolicyHolderUserUpdateInputType):
         pass

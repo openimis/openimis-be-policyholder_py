@@ -1,5 +1,5 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
-from core.models import User, InteractiveUser
+from core.models import InteractiveUser
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType

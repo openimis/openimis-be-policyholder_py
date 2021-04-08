@@ -118,5 +118,6 @@ class PolicyHolderUserUpdateInputType(OpenIMISMutation.Input):
 
 class PolicyHolderUserReplaceInputType(ReplaceInputType):
     user_id = graphene.UUID(required=True)
+    policy_holder_id = graphene.UUID(required=False)
     date_valid_from = graphene.Date(required=True)
     date_valid_to = graphene.Date(required=False)
