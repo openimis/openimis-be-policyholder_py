@@ -1,4 +1,5 @@
 from django.db.models import Q
+from core.models import InteractiveUser
 from payment.apps import PaymentConfig
 from payment.models import Payment
 from .apps import PolicyholderConfig
@@ -14,6 +15,12 @@ def append_policy_holder_filter(sender, **kwargs):
         if user.has_perms(PaymentConfig.gql_query_payments_perms) or user.has_perms(PolicyholderConfig.gql_query_payment_portal_perms):
             ph_id = additional_filter["policyHolder"]
             # check if user is linked to ph in policy holder user table
-            ph_user = PolicyHolderUser.objects.filter(Q(policy_holder__id=ph_id, user=user)).first()
-            if ph_user:
-                return Q(payment_details__premium__contract_contribution_plan_details__contract_details__contract__policy_holder__id=ph_id)
+            type_user = f"{user}"
+            # related to user object output (i) or (t)
+            # check if we have interactive user from current context
+            if '(i)' in type_user:
+                ph_user = PolicyHolderUser.objects.filter(Q(policy_holder__id=ph_id, user=user)).first()
+                if ph_user:
+                    return Q(
+                        payment_details__premium__contract_contribution_plan_details__contract_details__contract__policy_holder__id=ph_id
+                    )
