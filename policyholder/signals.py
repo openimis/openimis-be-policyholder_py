@@ -18,7 +18,7 @@ def append_policy_holder_filter(sender, **kwargs):
             # related to user object output (i) or (t)
             # check if we have interactive user from current context
             if '(i)' in type_user:
-                ph_user = PolicyHolderUser.objects.filter(Q(policy_holder__id=ph_id, user=user)).first()
+                ph_user = PolicyHolderUser.objects.filter(Q(policy_holder__id=ph_id, user__uuid=user.uuid)).first()
                 if ph_user:
                     return Q(
                         payment_details__premium__contract_contribution_plan_details__contract_details__contract__policy_holder__id=ph_id
