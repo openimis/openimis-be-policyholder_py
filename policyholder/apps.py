@@ -34,6 +34,7 @@ DEFAULT_CFG = {
     "gql_query_policyholdercontributionplanbundle_portal_perms": ["154601"],
     "gql_query_policyholderuser_portal_perms": ["154401"],
     "gql_query_payment_portal_perms": ["154501"],
+    "gql_query_insuree_policy_portal_perms": ["154901"],
     "gql_mutation_create_policyholderinsuree_portal_perms": ["154102"],
     "gql_mutation_update_policyholderinsuree_portal_perms": ["154103"],
     "gql_mutation_delete_policyholderinsuree_portal_perms": ["154104"],
@@ -77,6 +78,7 @@ class PolicyholderConfig(AppConfig):
     gql_query_policyholdercontributionplanbundle_portal_perms = []
     gql_query_policyholderuser_portal_perms = []
     gql_query_payment_portal_perms = []
+    gql_query_insuree_policy_portal_perms = []
     gql_mutation_create_policyholderinsuree_portal_perms = []
     gql_mutation_update_policyholderinsuree_portal_perms = []
     gql_mutation_delete_policyholderinsuree_portal_perms = []
@@ -144,6 +146,8 @@ class PolicyholderConfig(AppConfig):
             "gql_query_policyholderuser_portal_perms"]
         PolicyholderConfig.gql_query_payment_portal_perms = cfg[
             "gql_query_payment_portal_perms"]
+        PolicyholderConfig.gql_query_insuree_policy_portal_perms = cfg[
+            "gql_query_insuree_policy_portal_perms"]
         PolicyholderConfig.gql_mutation_create_policyholderinsuree_portal_perms = cfg[
             "gql_mutation_create_policyholderinsuree_portal_perms"]
         PolicyholderConfig.gql_mutation_update_policyholderinsuree_portal_perms = cfg[
