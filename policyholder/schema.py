@@ -67,7 +67,7 @@ class Query(graphene.ObjectType):
         # go to process additional filter only when this arg of filter was passed into query
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
             # then check perms
-            if info.context.user.has_perms(PolicyholderConfig.gql_query_payment_portal_perms):
+            if info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_portal_perms):
                 # check if user is linked to ph in policy holder user table
                 type_user = f"{info.context.user}"
                 # related to user object output (i) or (t)
@@ -79,7 +79,8 @@ class Query(graphene.ObjectType):
                         Q(user_id=info.context.user.i_user.id)
                     ).filter(
                         Q(date_valid_from__lte=now),
-                        Q(date_valid_to=None) | Q(date_valid_to__gte=now)
+                        Q(date_valid_to__isnull=True) | Q(date_valid_to__gte=now),
+                        Q(is_deleted=False)
                     ).values_list('policy_holder', flat=True).distinct()
                  
                     if uuids:
