@@ -1,6 +1,7 @@
 import graphene
 from contribution_plan.gql import ContributionPlanBundleGQLType
 from core import prefix_filterset, ExtendedConnection
+from core.gql_queries import InteractiveUserGQLType
 from graphene_django import DjangoObjectType
 from insuree.schema import InsureeGQLType
 from location.gql_queries import LocationGQLType
@@ -96,6 +97,7 @@ class PolicyHolderUserGQLType(DjangoObjectType):
             "id": ["exact"],
             "user": ["exact"],
             **prefix_filterset("policy_holder__", PolicyHolderGQLType._meta.filter_fields),
+            **prefix_filterset("user__", InteractiveUserGQLType._meta.filter_fields),
             "date_created": ["exact", "lt", "lte", "gt", "gte"],
             "date_updated": ["exact", "lt", "lte", "gt", "gte"],
             "user_created": ["exact"],
