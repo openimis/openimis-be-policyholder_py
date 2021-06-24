@@ -54,14 +54,9 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
 
     @classmethod
     def create_policy_holder_user(cls, user, object_data):
-        interactive_user = InteractiveUser.objects.filter(uuid=object_data["user_id"]).first()
-        if interactive_user:
-            id_user_i = interactive_user.id
-            object_data.pop('user_id')
-            object_data["user_id"] = id_user_i
-            obj = cls._model(**object_data)
-            obj.save(username=user.username)
-            return obj
+        obj = cls._model(**object_data)
+        obj.save(username=user.username)
+        return obj
 
     class Input(PolicyHolderUserInputType):
         pass
