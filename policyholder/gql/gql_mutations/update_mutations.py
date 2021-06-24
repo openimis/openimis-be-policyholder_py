@@ -49,12 +49,6 @@ class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMu
             data.pop('client_mutation_id')
         if "client_mutation_label" in data:
             data.pop('client_mutation_label')
-        if "user_id" in data:
-            interactive_user = InteractiveUser.objects.filter(uuid=data["user_id"]).first()
-            if interactive_user:
-                id_user_i = interactive_user.id
-                data.pop('user_id')
-                data["user_id"] = id_user_i
         updated_object = cls._model.objects.filter(id=data['id']).first()
         [setattr(updated_object, key, data[key]) for key in data]
         cls.update_policy_holder_user(user=user, object_to_update=updated_object)

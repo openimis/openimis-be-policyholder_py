@@ -21,7 +21,7 @@ def append_policy_holder_filter(sender, **kwargs):
                 from core import datetime
                 now = datetime.datetime.now()
                 ph_user = PolicyHolderUser.objects.filter(
-                    Q(policy_holder__id=ph_id, user__id=user.i_user.id)
+                    Q(policy_holder__id=ph_id, user__id=user.id)
                 ).filter(
                     Q(date_valid_from=None) | Q(date_valid_from__lte=now),
                     Q(date_valid_to=None) | Q(date_valid_to__gte=now)
