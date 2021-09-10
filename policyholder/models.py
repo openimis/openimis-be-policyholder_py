@@ -11,7 +11,7 @@ from insuree.models import Insuree
 from policy.models import Policy
 
 
-class PolicyHolderManager(models.Manager):
+class PolicyHolderManager(core_models.HistoryModelManager):
     def filter(self, *args, **kwargs):
         keys = [x for x in kwargs if "itemsvc" in x]
         for key in keys:
@@ -55,7 +55,7 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         db_table = 'tblPolicyHolder'
 
 
-class PolicyHolderInsureeManager(models.Manager):
+class PolicyHolderInsureeManager(core_models.HistoryModelManager):
     def filter(self, *args, **kwargs):
         keys = [x for x in kwargs if "itemsvc" in x]
         for key in keys:
@@ -90,7 +90,7 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
         db_table = 'tblPolicyHolderInsuree'
 
 
-class PolicyHolderContributionPlanManager(models.Manager):
+class PolicyHolderContributionPlanManager(core_models.HistoryModelManager):
     def filter(self, *args, **kwargs):
         keys = [x for x in kwargs if "itemsvc" in x]
         for key in keys:
@@ -122,7 +122,7 @@ class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
         db_table = 'tblPolicyHolderContributionPlan'
 
 
-class PolicyHolderUserManager(models.Manager):
+class PolicyHolderUserManager(core_models.HistoryModelManager):
     def filter(self, *args, **kwargs):
         keys = [x for x in kwargs if "itemsvc" in x]
         for key in keys:
