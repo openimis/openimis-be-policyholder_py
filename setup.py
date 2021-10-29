@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='openimis-be-policyholder',
-    version='1.0.0',
+    version='1.0.0.rc1',
     packages=find_packages(),
     include_package_data=True,
     license='GNU AGPL v3',
@@ -23,7 +23,13 @@ setup(
     install_requires=[
         'django',
         'django-db-signals',
-        'djangorestframework'
+        'djangorestframework',
+        'openimis-be-core',
+        'openimis-be-location',
+        'openimis-be-payment',
+        'openimis-be-policy',
+        'openimis-be-insuree',
+        'openimis-be-contribution_plan'
     ],
     classifiers=[
         'Environment :: Web Environment',
