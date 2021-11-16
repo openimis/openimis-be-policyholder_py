@@ -7,6 +7,8 @@ from django.db import connection, transaction
 from django.contrib.auth.models import AnonymousUser
 from django.core import serializers
 from django.forms.models import model_to_dict
+
+from policyholder.apps import PolicyholderConfig
 from policyholder.models import PolicyHolder as PolicyHolderModel, PolicyHolderUser as PolicyHolderUserModel, \
     PolicyHolderContributionPlan as PolicyHolderContributionPlanModel, PolicyHolderInsuree as PolicyHolderInsureeModel
 from policyholder.validation import PolicyHolderValidation
@@ -23,6 +25,7 @@ def check_authentication(function):
         else:
             result = function(self, *args, **kwargs)
             return result
+
     return wrapper
 
 
@@ -187,8 +190,10 @@ class PolicyHolderContributionPlan(object):
     @check_authentication
     def update(self, policy_holder_contribution_plan):
         try:
-            updated_phcp = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['id']).first()
-            [setattr(updated_phcp, key, policy_holder_contribution_plan[key]) for key in policy_holder_contribution_plan]
+            updated_phcp = PolicyHolderContributionPlanModel.objects.filter(
+                id=policy_holder_contribution_plan['id']).first()
+            [setattr(updated_phcp, key, policy_holder_contribution_plan[key]) for key in
+             policy_holder_contribution_plan]
             updated_phcp.save(username=self.user.username)
             uuid_string = str(updated_phcp.id)
             dict_representation = model_to_dict(updated_phcp)
@@ -200,7 +205,8 @@ class PolicyHolderContributionPlan(object):
     @check_authentication
     def delete(self, policy_holder_contribution_plan):
         try:
-            phcp_to_delete = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['id']).first()
+            phcp_to_delete = PolicyHolderContributionPlanModel.objects.filter(
+                id=policy_holder_contribution_plan['id']).first()
             phcp_to_delete.delete(username=self.user.username)
             return {
                 "success": True,
@@ -213,7 +219,8 @@ class PolicyHolderContributionPlan(object):
     @check_authentication
     def replace_policy_holder_contribution_plan_bundle(self, policy_holder_contribution_plan):
         try:
-            phcp_to_replace = PolicyHolderContributionPlanModel.objects.filter(id=policy_holder_contribution_plan['uuid']).first()
+            phcp_to_replace = PolicyHolderContributionPlanModel.objects.filter(
+                id=policy_holder_contribution_plan['uuid']).first()
             phcp_to_replace.replace_object(data=policy_holder_contribution_plan, username=self.user.username)
             uuid_string = str(phcp_to_replace.id)
             dict_representation = model_to_dict(phcp_to_replace)
@@ -300,6 +307,24 @@ class PolicyHolderUser(object):
             "old_object": json.loads(json.dumps(dict_representation, cls=DjangoJSONEncoder)),
             "uuid_new_object": str(phu_to_replace.replacement_uuid),
         }
+
+
+class PolicyHolderActivity(object):
+    def __init__(self, user):
+        self.user = user
+
+    @check_authentication
+    def get_all(self):
+        return _output_result_success(PolicyholderConfig.policyholder_activity)
+
+
+class PolicyHolderLegalForm(object):
+    def __init__(self, user):
+        self.user = user
+
+    @check_authentication
+    def get_all(self):
+        return _output_result_success(PolicyholderConfig.policyholder_legal_form)
 
 
 def _output_exception(model_name, method, exception):
