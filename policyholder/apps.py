@@ -1,8 +1,6 @@
 from django.apps import AppConfig
 
-
 MODULE_NAME = "policyholder"
-
 
 DEFAULT_CFG = {
     "gql_query_policyholder_perms": ["150101"],
@@ -43,6 +41,50 @@ DEFAULT_CFG = {
     "gql_mutation_update_policyholderuser_portal_perms": ["154403"],
     "gql_mutation_delete_policyholderuser_portal_perms": ["154404"],
     "gql_mutation_replace_policyholderuser_portal_perms": ["154406"],
+    "policyholder_legal_form": [
+        {
+            "code": "1",
+            "display": "Personal Company",
+        },
+        {
+            "code": "2",
+            "display": "Limited Risk Company",
+        },
+        {
+            "code": "3",
+            "display": "Association",
+        },
+        {
+            "code": "4",
+            "display": "Government",
+        },
+        {
+            "code": "5",
+            "display": "Union",
+        },
+    ],
+    "policyholder_activity": [
+        {
+            "code": "1",
+            "display": "Retail",
+        },
+        {
+            "code": "2",
+            "display": "Industry",
+        },
+        {
+            "code": "3",
+            "display": "Building",
+        },
+        {
+            "code": "4",
+            "display": "Sailing",
+        },
+        {
+            "code": "5",
+            "display": "Services",
+        },
+    ]
 }
 
 
@@ -87,6 +129,9 @@ class PolicyholderConfig(AppConfig):
     gql_mutation_update_policyholderuser_portal_perms = []
     gql_mutation_delete_policyholderuser_portal_perms = []
     gql_mutation_replace_policyholderuser_portal_perms = []
+
+    policyholder_legal_form = []
+    policyholder_activity = []
 
     def _configure_permissions(self, cfg):
         PolicyholderConfig.gql_query_policyholder_perms = cfg[
@@ -165,8 +210,12 @@ class PolicyholderConfig(AppConfig):
         PolicyholderConfig.gql_mutation_replace_policyholderuser_portal_perms = cfg[
             "gql_mutation_replace_policyholderuser_portal_perms"]
 
+    def _configure_coding(self, cfg):
+        PolicyholderConfig.policyholder_legal_form = cfg["policyholder_legal_form"]
+        PolicyholderConfig.policyholder_activity = cfg["policyholder_activity"]
 
     def ready(self):
         from core.models import ModuleConfiguration
         cfg = ModuleConfiguration.get_or_default(MODULE_NAME, DEFAULT_CFG)
         self._configure_permissions(cfg)
+        self._configure_coding(cfg)
