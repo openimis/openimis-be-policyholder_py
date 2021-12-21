@@ -112,5 +112,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(sql=MIGRATION_SQL)
+        migrations.RunSQL(sql=MIGRATION_SQL),
     ]
