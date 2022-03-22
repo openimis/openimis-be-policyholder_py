@@ -2,6 +2,7 @@ import json
 
 from contribution_plan.tests.helpers import create_test_contribution_plan_bundle
 from core.models import InteractiveUser, User, Officer, TechnicalUser
+from core.test_helpers import create_test_technical_user
 from insuree.test_helpers import create_test_insuree
 from location.models import Location
 from policy.test_helpers import create_test_policy
@@ -101,7 +102,7 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
 
 
 def __get_or_create_simple_policy_holder_user():
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser(username='admin', password='S\/pe®Pąßw0rd™')
     user = User.objects.filter(username='admin').first()
+    if not user:
+        user = create_test_technical_user(username='admin', password='S\/pe®Pąßw0rd™', super_user=True)
     return user
