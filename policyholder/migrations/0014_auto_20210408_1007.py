@@ -12,14 +12,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='historicalpolicyholderuser',
-            name='user',
-            field=models.ForeignKey(blank=True, db_column='UserID', db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.InteractiveUser'),
-        ),
-        migrations.AlterField(
-            model_name='policyholderuser',
-            name='user',
-            field=models.ForeignKey(db_column='UserID', on_delete=django.db.models.deletion.DO_NOTHING, to='core.InteractiveUser'),
-        ),
+
     ]
