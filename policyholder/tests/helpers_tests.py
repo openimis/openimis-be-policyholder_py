@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from django.test import TestCase
 
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser
@@ -13,6 +14,7 @@ class HelpersTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(HelpersTest, cls).setUpClass()
         cls.policy_holder = cls.__create_test_policy_holder()
         cls.policy_holder_custom = cls.__create_test_policy_holder(custom=True)
 
@@ -21,14 +23,6 @@ class HelpersTest(TestCase):
 
         cls.policy_holder_user = cls.__create_test_policy_holder_user()
         cls.policy_holder_user_custom = cls.__create_test_policy_holder_user(custom=True)
-
-    @classmethod
-    def tearDownClass(cls):
-        PolicyHolderUser.objects.filter(
-            id__in=[cls.policy_holder_user.id, cls.policy_holder_user_custom.id]).delete()
-        PolicyHolderInsuree.objects.filter(id__in=[cls.policy_holder_insuree.id, cls.policy_holder_insuree_custom.id]).delete()
-        PolicyHolder.objects.filter(
-            id__in=[cls.policy_holder.id, cls.policy_holder_custom.id]).delete()
 
     def test_create_policy_holder(self):
         db_policy_holder = PolicyHolder.objects.filter(id=self.policy_holder.id).first()
@@ -72,7 +66,7 @@ class HelpersTest(TestCase):
             'code': 'CustomCode',
             'trade_name': 'CustomTradeName',
             'activity_code': -1,
-            }
+        }
 
     @classmethod
     @lru_cache(maxsize=2)
@@ -110,6 +104,3 @@ class HelpersTest(TestCase):
     def __create_test_policy_holder_user(cls, custom=False):
         custom_params = cls.__custom_policy_holder_user_params() if custom else {}
         return cls.__create_test_instance(create_test_policy_holder_user, custom_props=custom_params)
-
-
-
