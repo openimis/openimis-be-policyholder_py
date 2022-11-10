@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import models
 from core import models as core_models, fields
 from graphql import ResolveInfo
-from jsonfallback.fields import FallbackJSONField
 from location.models import Location, UserDistrict
 from insuree.models import Insuree
 from policy.models import Policy
@@ -24,15 +23,15 @@ class PolicyHolder(core_models.HistoryBusinessModel):
     code = models.CharField(db_column='PolicyHolderCode', max_length=32)
     trade_name = models.CharField(db_column='TradeName', max_length=255)
     locations = models.ForeignKey(Location, db_column='LocationsId', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
-    address = FallbackJSONField(db_column='Address', blank=True, null=True)
+    address = models.JSONField(db_column='Address', blank=True, null=True)
     phone = models.CharField(db_column='Phone', max_length=16, blank=True, null=True)
     fax = models.CharField(db_column='Fax', max_length=16, blank=True, null=True)
     email = models.CharField(db_column='Email', max_length=255, blank=True, null=True)
-    contact_name = FallbackJSONField(db_column='ContactName', blank=True, null=True)
+    contact_name = models.JSONField(db_column='ContactName', blank=True, null=True)
     legal_form = models.IntegerField(db_column='LegalForm', blank=True, null=True)
     activity_code = models.IntegerField(db_column='ActivityCode', blank=True, null=True)
     accountancy_account = models.CharField(db_column='AccountancyAccount', max_length=64, blank=True, null=True)
-    bank_account = FallbackJSONField(db_column="bankAccount", blank=True, null=True)
+    bank_account = models.JSONField(db_column="bankAccount", blank=True, null=True)
     payment_reference = models.CharField(db_column='PaymentReference', max_length=128, blank=True, null=True)
 
     objects = PolicyHolderManager()
