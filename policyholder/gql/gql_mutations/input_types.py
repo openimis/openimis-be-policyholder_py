@@ -70,6 +70,7 @@ class PolicyHolderInsureeUpdateInputType(OpenIMISMutation.Input):
 class PolicyHolderInsureeReplaceInputType(ReplaceInputType):
     insuree_id = graphene.Int(required=True, name="insureeId")
     contribution_plan_bundle_id = graphene.UUID(requried=True, name="contributionPlanBundleId")
+    json_ext = graphene.types.json.JSONString(required=False)
     date_valid_from = graphene.Date(required=True)
     date_valid_to = graphene.Date(required=False)
 
