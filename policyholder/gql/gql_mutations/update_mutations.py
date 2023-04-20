@@ -1,9 +1,11 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelUpdateMutationMixin
 from core.models import InteractiveUser
+from policyholder.apps import PolicyholderConfig
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInsureeUpdateInputType, \
     PolicyHolderContributionPlanUpdateInputType, PolicyHolderUserUpdateInputType, PolicyHolderUpdateInputType
 from policyholder.validation import PolicyHolderValidation
+from policyholder.validation.permission_validation import PermissionValidation
 
 
 class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
@@ -17,6 +19,7 @@ class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutati
     @classmethod
     def _validate_mutation(cls, user, **data):
         super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholder_perms)
         PolicyHolderValidation.validate_update(user, **data)
 
 
@@ -28,6 +31,11 @@ class UpdatePolicyHolderInsureeMutation(BaseHistoryModelUpdateMutationMixin, Bas
     class Input(PolicyHolderInsureeUpdateInputType):
         pass
 
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholderinsuree_perms)
+
 
 class UpdatePolicyHolderContributionPlanMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
@@ -36,6 +44,11 @@ class UpdatePolicyHolderContributionPlanMutation(BaseHistoryModelUpdateMutationM
 
     class Input(PolicyHolderContributionPlanUpdateInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholdercontributionplan_perms)
 
 
 class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
@@ -60,4 +73,10 @@ class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMu
 
     class Input(PolicyHolderUserUpdateInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholderuser_perms)
+
 

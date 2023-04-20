@@ -18,8 +18,12 @@ from policyholder.gql.gql_mutations.replace_mutation import ReplacePolicyHolderI
     ReplacePolicyHolderContributionPlanMutation, ReplacePolicyHolderUserMutation
 
 from policyholder.apps import PolicyholderConfig
+from policyholder.services import PolicyHolder as PolicyHolderServices
 from policyholder.gql.gql_types import PolicyHolderUserGQLType, PolicyHolderGQLType, PolicyHolderInsureeGQLType, \
     PolicyHolderContributionPlanGQLType
+
+from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext as _
 
 from payment.signals import signal_before_payment_query
 from .signals import append_policy_holder_filter
@@ -59,9 +63,22 @@ class Query(graphene.ObjectType):
         dateValidTo__Lte=graphene.DateTime(),
         applyDefaultValidityFilter=graphene.Boolean()
     )
+    validate_policy_holder_code = graphene.Field(
+        graphene.Boolean,
+        policy_holder_code=graphene.String(required=True),
+        description="Checks that the specified policy holder code is unique."
+    )
+
+    def resolve_validate_policy_holder_code(self, info, **kwargs):
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
+            raise PermissionDenied(_("unauthorized"))
+        errors = PolicyHolderServices.check_unique_code_policy_holder(code=kwargs['policy_holder_code'])
+        return False if errors else True
+
 
     def resolve_policy_holder(self, info, **kwargs):
-
+        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
+            raise PermissionDenied(_("unauthorized"))
         filters = []
         additional_filter = kwargs.get('additional_filter', None)
         # go to process additional filter only when this arg of filter was passed into query

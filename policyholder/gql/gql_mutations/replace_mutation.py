@@ -1,8 +1,10 @@
+from policyholder.apps import PolicyholderConfig
 from policyholder.gql.gql_mutations import PolicyHolderInsureeReplaceInputType, \
     PolicyHolderContributionPlanReplaceInputType, PolicyHolderUserReplaceInputType
 from core.gql.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
 from core.models import InteractiveUser
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
+from policyholder.validation.permission_validation import PermissionValidation
 
 
 class ReplacePolicyHolderInsureeMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
@@ -13,6 +15,11 @@ class ReplacePolicyHolderInsureeMutation(BaseHistoryModelReplaceMutationMixin, B
     class Input(PolicyHolderInsureeReplaceInputType):
         pass
 
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_replace_policyholderinsuree_perms)
+
 
 class ReplacePolicyHolderContributionPlanMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
@@ -21,6 +28,11 @@ class ReplacePolicyHolderContributionPlanMutation(BaseHistoryModelReplaceMutatio
 
     class Input(PolicyHolderContributionPlanReplaceInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_replace_policyholdercontributionplan_perms)
 
 
 class ReplacePolicyHolderUserMutation(BaseHistoryModelReplaceMutationMixin, BaseReplaceMutation):
@@ -42,3 +54,8 @@ class ReplacePolicyHolderUserMutation(BaseHistoryModelReplaceMutationMixin, Base
 
     class Input(PolicyHolderUserReplaceInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_replace_policyholderuser_perms)

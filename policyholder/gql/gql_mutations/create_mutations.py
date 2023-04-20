@@ -1,9 +1,14 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
 from core.models import InteractiveUser
+from policyholder.apps import PolicyholderConfig
+from policyholder.services import PolicyHolder as PolicyHolderServices
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
 from policyholder.validation import PolicyHolderValidation
+from policyholder.validation.permission_validation import PermissionValidation
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 
 class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
@@ -16,7 +21,10 @@ class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutati
 
     @classmethod
     def _validate_mutation(cls, user, **data):
+        if PolicyHolderServices.check_unique_code_policy_holder(code=data['code']):
+            raise ValidationError(_("mutation.ph_code_duplicated"))
         super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholder_perms)
         PolicyHolderValidation.validate_create(user, **data)
 
 
@@ -28,6 +36,11 @@ class CreatePolicyHolderInsureeMutation(BaseHistoryModelCreateMutationMixin, Bas
     class Input(PolicyHolderInsureeInputType):
         pass
 
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholderinsuree_perms)
+
 
 class CreatePolicyHolderContributionPlanMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
@@ -36,6 +49,11 @@ class CreatePolicyHolderContributionPlanMutation(BaseHistoryModelCreateMutationM
 
     class Input(PolicyHolderContributionPlanInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholdercontributionplan_perms)
 
 
 class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMutation):
@@ -60,4 +78,9 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
 
     class Input(PolicyHolderUserInputType):
         pass
+
+    @classmethod
+    def _validate_mutation(cls, user, **data):
+        super()._validate_mutation(user, **data)
+        PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholderuser_perms)
 

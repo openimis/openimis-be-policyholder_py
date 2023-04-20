@@ -58,6 +58,12 @@ class PolicyHolder(object):
             return _output_exception(model_name="PolicyHolder", method="create", exception=exc)
         return _output_result_success(dict_representation=dict_representation)
 
+    @staticmethod
+    def check_unique_code_policy_holder(code):
+        if PolicyHolderModel.objects.filter(code=code, is_deleted=False).exists():
+            return [{"message": "Policy holder code %s already exists" % code}]
+        return []
+
     @check_authentication
     def update(self, policy_holder):
         try:
