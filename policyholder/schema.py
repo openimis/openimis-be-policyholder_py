@@ -2,9 +2,9 @@ import graphene
 import graphene_django_optimizer as gql_optimizer
 
 from django.db.models import Q
-from location.apps import LocationConfig
 from core.schema import OrderedDjangoFilterConnectionField, signal_mutation_module_validate
 from core.utils import append_validity_filter
+from location.services import get_ancestor_location_filter
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, \
     PolicyHolderContributionPlan, PolicyHolderMutation, PolicyHolderInsureeMutation, \
     PolicyHolderContributionPlanMutation, PolicyHolderUserMutation
@@ -75,7 +75,6 @@ class Query(graphene.ObjectType):
         errors = PolicyHolderServices.check_unique_code_policy_holder(code=kwargs['policy_holder_code'])
         return False if errors else True
 
-
     def resolve_policy_holder(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
             raise PermissionDenied(_("unauthorized"))
@@ -99,29 +98,23 @@ class Query(graphene.ObjectType):
                         Q(date_valid_to__isnull=True) | Q(date_valid_to__gte=now),
                         Q(is_deleted=False)
                     ).values_list('policy_holder', flat=True).distinct()
-                 
+
                     if uuids:
-                       filters.append(Q(id__in=uuids))
+                        filters.append(Q(id__in=uuids))
                     else:
                         raise PermissionError("Unauthorized")
                 else:
-                    raise PermissionError("Unauthorized") 
+                    raise PermissionError("Unauthorized")
             else:
-                raise PermissionError("Unauthorized") 
-        #if there is a filter it means that there is  restricted permission  found by a signal
-        
+                raise PermissionError("Unauthorized")
+                # if there is a filter it means that there is  restricted permission  found by a signal
 
         filters += append_validity_filter(**kwargs)
+
         parent_location = kwargs.get('parent_location')
-        if parent_location is not None:
-            parent_location_level = kwargs.get('parent_location_level')
-            if parent_location_level is None:
-                raise NotImplementedError("Missing parentLocationLevel argument when filtering on parentLocation")
-            f = "uuid"
-            for i in range(len(LocationConfig.location_types) - parent_location_level - 1):
-                f = "parent__" + f
-            f = "locations__" + f
-            filters += [Q(**{f: parent_location})]
+        if parent_location:
+            filters += [get_ancestor_location_filter(parent_location, location_field='locations')]
+
         return gql_optimizer.query(PolicyHolder.objects.filter(*filters).all(), info)
 
     def resolve_policy_holder_insuree(self, info, **kwargs):
@@ -144,7 +137,8 @@ class Query(graphene.ObjectType):
 
     def resolve_policy_holder_contribution_plan_bundle(self, info, **kwargs):
         if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
-            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms):
+            if not info.context.user.has_perms(
+                    PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms):
                 raise PermissionError("Unauthorized")
 
         filters = append_validity_filter(**kwargs)
@@ -157,12 +151,12 @@ class Mutation(graphene.ObjectType):
     create_policy_holder_insuree = CreatePolicyHolderInsureeMutation.Field()
     create_policy_holder_user = CreatePolicyHolderUserMutation.Field()
     create_policy_holder_contribution_plan_bundle = CreatePolicyHolderContributionPlanMutation.Field()
-        
+
     update_policy_holder = UpdatePolicyHolderMutation.Field()
     update_policy_holder_insuree = UpdatePolicyHolderInsureeMutation.Field()
     update_policy_holder_user = UpdatePolicyHolderUserMutation.Field()
-    update_policy_holder_contribution_plan_bundle = UpdatePolicyHolderContributionPlanMutation.Field()       
-    
+    update_policy_holder_contribution_plan_bundle = UpdatePolicyHolderContributionPlanMutation.Field()
+
     delete_policy_holder = DeletePolicyHolderMutation.Field()
     delete_policy_holder_insuree = DeletePolicyHolderInsureeMutation.Field()
     delete_policy_holder_user = DeletePolicyHolderUserMutation.Field()
@@ -188,7 +182,8 @@ def on_policy_holder_mutation(sender, **kwargs):
     if "PolicyHolderContributionPlan" in str(sender._mutation_class):
         impacted_policy_holder_contribution_plan = PolicyHolderContributionPlan.objects.get(id=uuid)
         PolicyHolderContributionPlanMutation.objects.create(
-            policy_holder_contribution_plan=impacted_policy_holder_contribution_plan, mutation_id=kwargs['mutation_log_id'])
+            policy_holder_contribution_plan=impacted_policy_holder_contribution_plan,
+            mutation_id=kwargs['mutation_log_id'])
     if "PolicyHolderUser" in str(sender._mutation_class):
         impacted_policy_holder_user = PolicyHolderUser.objects.get(id=uuid)
         PolicyHolderUserMutation.objects.create(
@@ -199,4 +194,3 @@ def on_policy_holder_mutation(sender, **kwargs):
 def bind_signals():
     signal_mutation_module_validate["policyholder"].connect(on_policy_holder_mutation)
     signal_before_payment_query.connect(append_policy_holder_filter)
-
