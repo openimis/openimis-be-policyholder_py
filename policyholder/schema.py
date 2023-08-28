@@ -38,6 +38,7 @@ class Query(graphene.ObjectType):
         dateValidFrom__Gte=graphene.DateTime(),
         dateValidTo__Lte=graphene.DateTime(),
         applyDefaultValidityFilter=graphene.Boolean(),
+        clientMutationId=graphene.String()
     )
 
     policy_holder_insuree = OrderedDjangoFilterConnectionField(
@@ -110,6 +111,10 @@ class Query(graphene.ObjectType):
                 # if there is a filter it means that there is  restricted permission  found by a signal
 
         filters += append_validity_filter(**kwargs)
+
+        client_mutation_id = kwargs.pop("clientMutationId", None)
+        if client_mutation_id:
+            filters.append(Q(mutations__mutation__client_mutation_id=client_mutation_id))
 
         parent_location = kwargs.get('parent_location')
         if parent_location:
