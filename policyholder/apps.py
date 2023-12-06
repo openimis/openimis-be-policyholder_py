@@ -133,89 +133,12 @@ class PolicyholderConfig(AppConfig):
     policyholder_legal_form = []
     policyholder_activity = []
 
-    def _configure_permissions(self, cfg):
-        PolicyholderConfig.gql_query_policyholder_perms = cfg[
-            "gql_query_policyholder_perms"]
-        PolicyholderConfig.gql_query_policyholder_admins_perms = cfg[
-            "gql_query_policyholder_admins_perms"]
-        PolicyholderConfig.gql_query_policyholderinsuree_perms = cfg[
-            "gql_query_policyholderinsuree_perms"]
-        PolicyholderConfig.gql_query_policyholderinsuree_admins_perms = cfg[
-            "gql_query_policyholderinsuree_admins_perms"]
-        PolicyholderConfig.gql_query_policyholderuser_perms = cfg[
-            "gql_query_policyholderuser_perms"]
-        PolicyholderConfig.gql_query_policyholderuser_admins_perms = cfg[
-            "gql_query_policyholderuser_admins_perms"]
-        PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms = cfg[
-            "gql_query_policyholdercontributionplanbundle_perms"]
-        PolicyholderConfig.gql_query_policyholdercontributionplanbundle_admins_perms = cfg[
-            "gql_query_policyholdercontributionplanbundle_admins_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholder_perms = cfg[
-            "gql_mutation_create_policyholder_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholder_perms = cfg[
-            "gql_mutation_update_policyholder_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholder_perms = cfg[
-            "gql_mutation_delete_policyholder_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholderinsuree_perms = cfg[
-            "gql_mutation_create_policyholderinsuree_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholderinsuree_perms = cfg[
-            "gql_mutation_update_policyholderinsuree_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholderinsuree_perms = cfg[
-            "gql_mutation_delete_policyholderinsuree_perms"]
-        PolicyholderConfig.gql_mutation_replace_policyholderinsuree_perms = cfg[
-            "gql_mutation_replace_policyholderinsuree_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholderuser_perms = cfg[
-            "gql_mutation_create_policyholderuser_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholderuser_perms = cfg[
-            "gql_mutation_update_policyholderuser_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholderuser_perms = cfg[
-            "gql_mutation_delete_policyholderuser_perms"]
-        PolicyholderConfig.gql_mutation_replace_policyholderuser_perms = cfg[
-            "gql_mutation_replace_policyholderuser_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholdercontributionplan_perms = cfg[
-            "gql_mutation_create_policyholdercontributionplan_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholdercontributionplan_perms = cfg[
-            "gql_mutation_update_policyholdercontributionplan_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholdercontributionplan_perms = cfg[
-            "gql_mutation_delete_policyholdercontributionplan_perms"]
-        PolicyholderConfig.gql_mutation_replace_policyholdercontributionplan_perms = cfg[
-            "gql_mutation_replace_policyholdercontributionplan_perms"]
-        # OFS-260: Support the policyholder portal perms on Policyholder
-        PolicyholderConfig.gql_query_policyholder_portal_perms = cfg[
-            "gql_query_policyholder_portal_perms"]
-        PolicyholderConfig.gql_query_policyholderinsuree_portal_perms = cfg[
-            "gql_query_policyholderinsuree_portal_perms"]
-        PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms = cfg[
-            "gql_query_policyholdercontributionplanbundle_portal_perms"]
-        PolicyholderConfig.gql_query_policyholderuser_portal_perms = cfg[
-            "gql_query_policyholderuser_portal_perms"]
-        PolicyholderConfig.gql_query_payment_portal_perms = cfg[
-            "gql_query_payment_portal_perms"]
-        PolicyholderConfig.gql_query_insuree_policy_portal_perms = cfg[
-            "gql_query_insuree_policy_portal_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholderinsuree_portal_perms = cfg[
-            "gql_mutation_create_policyholderinsuree_portal_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholderinsuree_portal_perms = cfg[
-            "gql_mutation_update_policyholderinsuree_portal_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholderinsuree_portal_perms = cfg[
-            "gql_mutation_delete_policyholderinsuree_portal_perms"]
-        PolicyholderConfig.gql_mutation_replace_policyholderinsuree_portal_perms = cfg[
-            "gql_mutation_replace_policyholderinsuree_portal_perms"]
-        PolicyholderConfig.gql_mutation_create_policyholderuser_portal_perms = cfg[
-            "gql_mutation_create_policyholderuser_portal_perms"]
-        PolicyholderConfig.gql_mutation_update_policyholderuser_portal_perms = cfg[
-            "gql_mutation_update_policyholderuser_portal_perms"]
-        PolicyholderConfig.gql_mutation_delete_policyholderuser_portal_perms = cfg[
-            "gql_mutation_delete_policyholderuser_portal_perms"]
-        PolicyholderConfig.gql_mutation_replace_policyholderuser_portal_perms = cfg[
-            "gql_mutation_replace_policyholderuser_portal_perms"]
-
-    def _configure_coding(self, cfg):
-        PolicyholderConfig.policyholder_legal_form = cfg["policyholder_legal_form"]
-        PolicyholderConfig.policyholder_activity = cfg["policyholder_activity"]
+    def __load_config(self, cfg):
+        for field in cfg:
+            if hasattr(PolicyholderConfig, field):
+                setattr(PolicyholderConfig, field, cfg[field])
 
     def ready(self):
         from core.models import ModuleConfiguration
         cfg = ModuleConfiguration.get_or_default(MODULE_NAME, DEFAULT_CFG)
-        self._configure_permissions(cfg)
-        self._configure_coding(cfg)
+        self.__load_config(cfg)

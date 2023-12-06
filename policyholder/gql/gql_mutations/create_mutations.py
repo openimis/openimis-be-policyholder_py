@@ -2,7 +2,8 @@ from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelC
 from core.models import InteractiveUser
 from policyholder.apps import PolicyholderConfig
 from policyholder.services import PolicyHolder as PolicyHolderServices
-from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
+from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser, \
+    PolicyHolderMutation
 from policyholder.gql.gql_mutations import PolicyHolderInputType, PolicyHolderInsureeInputType, \
     PolicyHolderContributionPlanInputType, PolicyHolderUserInputType
 from policyholder.validation import PolicyHolderValidation
@@ -18,6 +19,17 @@ class CreatePolicyHolderMutation(BaseHistoryModelCreateMutationMixin, BaseMutati
 
     class Input(PolicyHolderInputType):
         pass
+
+    @classmethod
+    def _mutate(cls, user, **data):
+        client_mutation_id = data.pop('client_mutation_id', None)
+        if "client_mutation_label" in data:
+            data.pop('client_mutation_label')
+        policy_holder = cls.create_object(user=user, object_data=data)
+        if client_mutation_id:
+            PolicyHolderMutation.object_mutated(
+                user, client_mutation_id=client_mutation_id, policy_holder=policy_holder
+            )
 
     @classmethod
     def _validate_mutation(cls, user, **data):
