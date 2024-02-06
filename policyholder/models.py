@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from core import models as core_models, fields
 from graphql import ResolveInfo
-from location.models import Location, UserDistrict
+from location.models import Location, LocationManager
 from insuree.models import Insuree
 from policy.models import Policy
 
@@ -44,10 +44,7 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         if settings.ROW_SECURITY and user.is_anonymous:
             return queryset.filter(id=None)
         if settings.ROW_SECURITY:
-            dist = UserDistrict.get_user_districts(user._u)
-            return queryset.filter(
-                locations__parent__parent_id__in=[l.location_id for l in dist]
-            )
+            return LocationManager().build_user_location_filter_query(user._u, queryset = queryset)          
         return queryset
 
     class Meta:
