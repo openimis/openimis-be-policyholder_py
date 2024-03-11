@@ -1,0 +1,13 @@
+[1mdiff --git a/policyholder/models.py b/policyholder/models.py[m
+[1mindex 6d56d03..609bd15 100644[m
+[1m--- a/policyholder/models.py[m
+[1m+++ b/policyholder/models.py[m
+[36m@@ -44,7 +44,7 @@[m [mclass PolicyHolder(core_models.HistoryBusinessModel):[m
+         if settings.ROW_SECURITY and user.is_anonymous:[m
+             return queryset.filter(id=None)[m
+         if settings.ROW_SECURITY:[m
+[31m-            return LocationManager().build_user_location_filter_query(user._u, queryset = queryset)          [m
+[32m+[m[32m            return LocationManager().build_user_location_filter_query(user._u, queryset=queryset, prefix='locations')[m
+         return queryset[m
+ [m
+     class Meta:[m
