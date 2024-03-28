@@ -44,7 +44,7 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         if settings.ROW_SECURITY and user.is_anonymous:
             return queryset.filter(id=None)
         if settings.ROW_SECURITY:
-            return LocationManager().build_user_location_filter_query(user._u, queryset = queryset)          
+            return LocationManager().build_user_location_filter_query(user._u, queryset=queryset, prefix='locations')
         return queryset
 
     class Meta:
