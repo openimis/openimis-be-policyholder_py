@@ -41,10 +41,10 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
         insuree = create_test_insuree()
     if not contribution_plan_bundle:
         contribution_plan_bundle = create_test_contribution_plan_bundle()
-    #if not last_policy:
-    #    last_policy = create_test_policy(
-    #        product=create_test_product("TestCode", custom_props={"insurance_period": 12, }),
-    #        insuree=insuree)
+    if last_policy == True:
+        last_policy = create_test_policy(
+            product=create_test_product("TestCode", custom_props={"insurance_period": 12, }),
+            insuree=insuree)
 
     user = __get_or_create_simple_policy_holder_user()
 
