@@ -214,7 +214,7 @@ class ServiceTestPolicyHolder(TestCase):
             'policy_holder_id': str(self.test_policy_holder.id),
             'insuree_id': self.test_insuree.id,
             'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
-            'last_policy_id': self.test_last_policy.id
+            'last_policy_id': self.test_last_policy.id if self.test_last_policy else None
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -231,7 +231,7 @@ class ServiceTestPolicyHolder(TestCase):
                 str(self.test_policy_holder.id),
                 self.test_insuree.id,
                 str(self.test_contribution_plan_bundle.id),
-                self.test_last_policy.id
+                self.test_last_policy.id if self.test_last_policy else None
             ),
             (
                 response['success'],
@@ -267,7 +267,7 @@ class ServiceTestPolicyHolder(TestCase):
             'policy_holder_id': str(self.test_policy_holder.id),
             'insuree_id': self.test_insuree.id,
             'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
-            'last_policy_id': self.test_last_policy.id
+            'last_policy_id': self.test_last_policy.id if self.test_last_policy else None
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -340,7 +340,7 @@ class ServiceTestPolicyHolder(TestCase):
             'policy_holder_id': str(self.test_policy_holder.id),
             'insuree_id': self.test_insuree.id,
             'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
-            'last_policy_id': self.test_last_policy.id
+            'last_policy_id': self.test_last_policy.id if self.test_last_policy else None
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
@@ -378,7 +378,7 @@ class ServiceTestPolicyHolder(TestCase):
             'policy_holder_id': str(self.test_policy_holder.id),
             'insuree_id': self.test_insuree.id,
             'contribution_plan_bundle_id': str(self.test_contribution_plan_bundle.id),
-            'last_policy_id': self.test_last_policy.id
+            'last_policy_id': self.test_last_policy.id if self.test_last_policy else None
         }
 
         response = self.policy_holder_insuree_service.create(policy_holder_insuree)
