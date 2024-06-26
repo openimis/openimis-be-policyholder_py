@@ -11,17 +11,6 @@ from product.test_helpers import create_test_product
 PH_DATA = {
     'code': 'PHCode',
     'trade_name': 'CompanyTest',
-    'address': {"region": "APAC", "street": "test"},
-    'phone': '111000111',
-    'fax': 'Fax',
-    'email': 'policy_holder@mail.com',
-    'contact_name': {"name": "test", "surname": "test-test"},
-    'legal_form': 1,
-    'activity_code': 2,
-    'accountancy_account': '128903719082739810273',
-    'bank_account': {"IBAN": "PL00 0000 2345 0000 1000 2345 2345"},
-    'payment_reference': 'PolicyHolderPaymentReference',
-    'json_ext': {},
 }
 
 
@@ -52,7 +41,7 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
         insuree = create_test_insuree()
     if not contribution_plan_bundle:
         contribution_plan_bundle = create_test_contribution_plan_bundle()
-    if not last_policy:
+    if last_policy == True:
         last_policy = create_test_policy(
             product=create_test_product("TestCode", custom_props={"insurance_period": 12, }),
             insuree=insuree)
