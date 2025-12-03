@@ -32,9 +32,9 @@ class ServiceTestPolicyHolder(TestCase):
     @classmethod
     def setUpClass(cls):
         super(ServiceTestPolicyHolder, cls).setUpClass()
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser(username='admin', password='S\/pe®Pąßw0rd™')
-        cls.user = User.objects.filter(username='admin').first()
+        if not User.objects.filter(username='Admin').exists():
+            User.objects.create_superuser(username='Admin', password='S\/pe®Pąßw0rd™')
+        cls.user = User.objects.filter(username='Admin').first()
         cls.policy_holder_service = PolicyHolderService(cls.user)
         cls.policy_holder_insuree_service = PolicyHolderInsureeService(cls.user)
         cls.policy_holder_contribution_plan_service = PolicyHolderContributionPlanService(cls.user)
