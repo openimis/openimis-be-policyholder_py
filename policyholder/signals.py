@@ -1,6 +1,5 @@
 from django.db.models import Q
 from payment.apps import PaymentConfig
-from payment.models import Payment
 from .apps import PolicyholderConfig
 from .models import PolicyHolderUser
 

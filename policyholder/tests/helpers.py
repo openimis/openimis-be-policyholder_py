@@ -1,5 +1,5 @@
 from contribution_plan.tests.helpers import create_test_contribution_plan_bundle
-from core.models import User
+from core.test_helpers import create_test_interactive_user
 from insuree.test_helpers import create_test_insuree
 from location.models import Location
 from policy.test_helpers import create_test_policy
@@ -14,8 +14,8 @@ PH_DATA = {
 }
 
 
-def create_test_policy_holder(locations=None, custom_props={}):
-    user = __get_or_create_simple_policy_holder_user()
+def create_test_policy_holder(locations=None, custom_props={}, user=None):
+    user = user or __get_or_create_simple_policy_holder_user()
 
     object_data = {
         **PH_DATA,
@@ -28,7 +28,7 @@ def create_test_policy_holder(locations=None, custom_props={}):
     else:
         location = Location.objects.order_by('id').first()
         policy_holder.locations_uuid = location
-    policy_holder.save(username=user.username)
+    policy_holder.save(user=user)
 
     return policy_holder
 
@@ -41,7 +41,7 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
         insuree = create_test_insuree()
     if not contribution_plan_bundle:
         contribution_plan_bundle = create_test_contribution_plan_bundle()
-    if last_policy == True:
+    if last_policy is True:
         last_policy = create_test_policy(
             product=create_test_product("TestCode", custom_props={"insurance_period": 12, }),
             insuree=insuree)
@@ -58,7 +58,7 @@ def create_test_policy_holder_insuree(policy_holder=None, insuree=None, contribu
     }
 
     policy_holder_insuree = PolicyHolderInsuree(**object_data)
-    policy_holder_insuree.save(username=user.username)
+    policy_holder_insuree.save(user=user)
 
     return policy_holder_insuree
 
@@ -70,7 +70,7 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
     if not policy_holder:
         policy_holder = create_test_policy_holder()
 
-    audit_user = __get_or_create_simple_policy_holder_user()
+    # audit_user = __get_or_create_simple_policy_holder_user()
 
     object_data = {
         'user': user,
@@ -80,13 +80,10 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
     }
 
     policy_holder_user = PolicyHolderUser(**object_data)
-    policy_holder_user.save(username=user.username)
+    policy_holder_user.save(user=user)
 
     return policy_holder_user
 
 
 def __get_or_create_simple_policy_holder_user():
-    if not User.objects.filter(username='Admin').exists():
-        User.objects.create_superuser(username='Admin', password='S\/pe®Pąßw0rd™')
-    user = User.objects.filter(username='Admin').first()
-    return user
+    return create_test_interactive_user(username='AdminPH')

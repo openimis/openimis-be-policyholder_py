@@ -1,11 +1,7 @@
-import core
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.exceptions import PermissionDenied
-from django.db import connection, transaction
 from django.contrib.auth.models import AnonymousUser
-from django.core import serializers
 from django.forms.models import model_to_dict
 
 from policyholder.apps import PolicyholderConfig
@@ -50,7 +46,7 @@ class PolicyHolder(object):
         try:
             PolicyHolderValidation.validate_create(self.user, **policy_holder)
             phm = PolicyHolderModel(**policy_holder)
-            phm.save(username=self.user.username)
+            phm.save(user=self.user)
             uuid_string = str(phm.id)
             dict_representation = model_to_dict(phm)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -70,7 +66,7 @@ class PolicyHolder(object):
             PolicyHolderValidation.validate_update(self.user, **policy_holder)
             updated_phm = PolicyHolderModel.objects.filter(id=policy_holder['id']).first()
             [setattr(updated_phm, key, policy_holder[key]) for key in policy_holder]
-            updated_phm.save(username=self.user.username)
+            updated_phm.save(user=self.user)
             uuid_string = str(updated_phm.id)
             dict_representation = model_to_dict(updated_phm)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -112,7 +108,7 @@ class PolicyHolderInsuree(object):
     def create(self, policy_holder_insuree):
         try:
             phim = PolicyHolderInsureeModel(**policy_holder_insuree)
-            phim.save(username=self.user.username)
+            phim.save(user=self.user)
             uuid_string = str(phim.id)
             dict_representation = model_to_dict(phim)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -125,7 +121,7 @@ class PolicyHolderInsuree(object):
         try:
             updated_phim = PolicyHolderInsureeModel.objects.filter(id=policy_holder_insuree['id']).first()
             [setattr(updated_phim, key, policy_holder_insuree[key]) for key in policy_holder_insuree]
-            updated_phim.save(username=self.user.username)
+            updated_phim.save(user=self.user)
             uuid_string = str(updated_phim.id)
             dict_representation = model_to_dict(updated_phim)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -185,7 +181,7 @@ class PolicyHolderContributionPlan(object):
     def create(self, policy_holder_contribution_plan):
         try:
             phcp = PolicyHolderContributionPlanModel(**policy_holder_contribution_plan)
-            phcp.save(username=self.user.username)
+            phcp.save(user=self.user)
             uuid_string = str(phcp.id)
             dict_representation = model_to_dict(phcp)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -200,7 +196,7 @@ class PolicyHolderContributionPlan(object):
                 id=policy_holder_contribution_plan['id']).first()
             [setattr(updated_phcp, key, policy_holder_contribution_plan[key]) for key in
              policy_holder_contribution_plan]
-            updated_phcp.save(username=self.user.username)
+            updated_phcp.save(user=self.user)
             uuid_string = str(updated_phcp.id)
             dict_representation = model_to_dict(updated_phcp)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -262,7 +258,7 @@ class PolicyHolderUser(object):
     def create(self, policy_holder_user):
         try:
             phu = PolicyHolderUserModel(**policy_holder_user)
-            phu.save(username=self.user.username)
+            phu.save(user=self.user)
             uuid_string = str(phu.id)
             dict_representation = model_to_dict(phu)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))
@@ -275,7 +271,7 @@ class PolicyHolderUser(object):
         try:
             updated_phu = PolicyHolderUserModel.objects.filter(id=policy_holder_user['id']).first()
             [setattr(updated_phu, key, policy_holder_user[key]) for key in policy_holder_user]
-            updated_phu.save(username=self.user.username)
+            updated_phu.save(user=self.user)
             uuid_string = str(updated_phu.id)
             dict_representation = model_to_dict(updated_phu)
             dict_representation["id"], dict_representation["uuid"] = (str(uuid_string), str(uuid_string))

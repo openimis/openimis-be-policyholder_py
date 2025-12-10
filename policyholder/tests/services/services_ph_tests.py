@@ -4,7 +4,7 @@ from policyholder.services import PolicyHolder as PolicyHolderService, \
     PolicyHolderInsuree as PolicyHolderInsureeService, \
     PolicyHolderContributionPlan as PolicyHolderContributionPlanService
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan
-from policyholder.tests.helpers import create_test_policy_holder, create_test_policy_holder_insuree, PH_DATA as POLICY_HOLDER_MINI
+from policyholder.tests.helpers import create_test_policy_holder, create_test_policy_holder_insuree
 
 from contribution_plan.tests.helpers_tests import create_test_contribution_plan_bundle
 from insuree.test_helpers import create_test_insuree
@@ -33,7 +33,7 @@ class ServiceTestPolicyHolder(TestCase):
     def setUpClass(cls):
         super(ServiceTestPolicyHolder, cls).setUpClass()
         if not User.objects.filter(username='Admin').exists():
-            User.objects.create_superuser(username='Admin', password='S\/pe®Pąßw0rd™')
+            User.objects.create_superuser(username='Admin', password='Spe®Pąßw0rd™')
         cls.user = User.objects.filter(username='Admin').first()
         cls.policy_holder_service = PolicyHolderService(cls.user)
         cls.policy_holder_insuree_service = PolicyHolderInsureeService(cls.user)
@@ -44,15 +44,14 @@ class ServiceTestPolicyHolder(TestCase):
         cls.test_insuree = create_test_insuree()
         cls.test_policy_holder_insuree = create_test_policy_holder_insuree(policy_holder=cls.test_policy_holder, insuree=cls.test_insuree)
         cls.test_policy_holder_insuree = create_test_policy_holder_insuree(policy_holder=cls.test_policy_holder_mini, insuree=cls.test_insuree)
-        
-        
+
         cls.test_insuree_to_change = create_test_insuree()
         cls.test_contribution_plan_bundle = cls.test_policy_holder_insuree.contribution_plan_bundle
         cls.test_last_policy = cls.test_policy_holder_insuree.last_policy
         cls.test_contribution_plan_bundle_to_replace = create_test_contribution_plan_bundle()
 
     def test_policy_holder_create(self):
-        self.POLICY_HOLDER['code']='test_policy_holder_create'
+        self.POLICY_HOLDER['code'] = 'test_policy_holder_create'
 
         response = self.policy_holder_service.create(self.POLICY_HOLDER)
 
@@ -83,21 +82,21 @@ class ServiceTestPolicyHolder(TestCase):
 
     def test_duplicate_policy_holder_exception(self):
 
-        self.POLICY_HOLDER['code']='qwerqwre'
+        self.POLICY_HOLDER['code'] = 'qwerqwre'
         first = self.policy_holder_service.create(self.POLICY_HOLDER)
         second = self.policy_holder_service.create(self.POLICY_HOLDER)
 
         expected_error_message = PolicyHolderValidation.UNIQUE_DISPLAY_NAME_VALIDATION_ERROR \
             .format(self.POLICY_HOLDER['code'], self.POLICY_HOLDER['trade_name'])
-
+        self.assertTrue(first['success'])
         self.assertFalse(second['success'])
         self.assertTrue(expected_error_message in second['detail'])
 
     def test_policy_holder_create_update(self):
-        self.POLICY_HOLDER['code']='ddsdfsdffff'
+        self.POLICY_HOLDER['code'] = 'ddsdfsdffff'
         response = self.policy_holder_service.create(self.POLICY_HOLDER)
         policy_holder_object = PolicyHolder.objects.get(id=response['data']['id'])
-        version = policy_holder_object.version
+        # version = policy_holder_object.version
         policy_holder = {
             'id': str(policy_holder_object.id),
             'address': {"region": "TEST", "street": "TEST"},
@@ -125,7 +124,7 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_update_without_changing_field(self):
-        self.POLICY_HOLDER['code']='ddsseedfth'
+        self.POLICY_HOLDER['code'] = 'ddsseedfth'
         ph = self.policy_holder_service.create(self.POLICY_HOLDER)
         policy_holder_object = PolicyHolder.objects.filter(id=ph['data']['id']).first()
         policy_holder = {
@@ -148,7 +147,7 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_update_policy_holder_with_duplicated_display(self):
-        self.POLICY_HOLDER['code']='ddfdsffewdfd'
+        self.POLICY_HOLDER['code'] = 'ddfdsffewdfd'
 
         first = self.policy_holder_service.create(self.POLICY_HOLDER)
 
@@ -160,7 +159,6 @@ class ServiceTestPolicyHolder(TestCase):
         policy_holder = {'id': str(first['data']['id']), 'trade_name': second['data']['trade_name']}
 
         response = self.policy_holder_service.update(policy_holder)
-
 
         expected_error_message = PolicyHolderValidation.UNIQUE_DISPLAY_NAME_VALIDATION_ERROR \
             .format(self.POLICY_HOLDER['code'], second['data']['trade_name'])
@@ -185,16 +183,15 @@ class ServiceTestPolicyHolder(TestCase):
         )
 
     def test_policy_holder_create_delete(self):
-        self.POLICY_HOLDER['code']='qqeeyyaaf'
+        self.POLICY_HOLDER['code'] = 'qqeeyyaaf'
         response = self.policy_holder_service.create(self.POLICY_HOLDER)
         policy_holder_object = PolicyHolder.objects.filter(id=response['data']['id']).first()
 
-        version = policy_holder_object.version
+        # version = policy_holder_object.version
         policy_holder = {
             'id': str(policy_holder_object.id),
         }
         response = self.policy_holder_service.delete(policy_holder)
-
 
         self.assertEqual(
             (
