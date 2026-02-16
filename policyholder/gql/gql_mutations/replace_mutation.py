@@ -2,8 +2,7 @@ from policyholder.apps import PolicyholderConfig
 from policyholder.gql.gql_mutations import PolicyHolderInsureeReplaceInputType, \
     PolicyHolderContributionPlanReplaceInputType, PolicyHolderUserReplaceInputType
 from core.gql.gql_mutations.base_mutation import BaseReplaceMutation, BaseHistoryModelReplaceMutationMixin
-from core.models import InteractiveUser
-from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
+from policyholder.models import PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.validation.permission_validation import PermissionValidation
 
 

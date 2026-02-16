@@ -72,4 +72,3 @@ class Command(BaseCommand):
         if not self.insurees:
             self.insurees = Insuree.objects.filter(validity_to__isnull=True).values_list("pk", flat=True)
         return random.choice(self.insurees)
-

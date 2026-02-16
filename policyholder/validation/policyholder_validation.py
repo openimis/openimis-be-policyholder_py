@@ -1,5 +1,4 @@
 from django.core.exceptions import ValidationError
-from django.db.models import QuerySet
 
 from policyholder.models import PolicyHolder
 
@@ -24,13 +23,12 @@ class PolicyHolderValidation:
 
         if duplicated:
             raise ValidationError(cls.UNIQUE_DISPLAY_NAME_VALIDATION_ERROR.format(code, trade_name))
-        
-        if unmutable_attempt:= cls.__validate_unmutable_update_attempt(existing, data):
+
+        if unmutable_attempt := cls.__validate_unmutable_update_attempt(existing, data):
             raise ValidationError(
                 "\n".join(unmutable_attempt)
             )
-        
-        
+
     @classmethod
     def __validate_unmutable_update_attempt(cls, existing: PolicyHolder, updated: dict):
         # Code and date Valid from cannot be changed, see step 1 from `Edit assigned policy holder insuree`` Test Case
@@ -39,7 +37,7 @@ class PolicyHolderValidation:
             validation_results.append(cls.UNMUTABLE_FIELD_UPDATE_ATTEMPT.format('code'))
         if existing.date_valid_from.date() != updated.get('date_valid_from', existing.date_valid_from.date()):
             validation_results.append(cls.UNMUTABLE_FIELD_UPDATE_ATTEMPT.format('date_valid_from'))
-        
+
         return validation_results
 
     @classmethod

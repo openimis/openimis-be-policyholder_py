@@ -1,5 +1,4 @@
 from core.gql.gql_mutations.base_mutation import BaseMutation, BaseHistoryModelCreateMutationMixin
-from core.models import InteractiveUser
 from policyholder.apps import PolicyholderConfig
 from policyholder.services import PolicyHolder as PolicyHolderServices
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser, \
@@ -75,7 +74,6 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
 
     @classmethod
     def _mutate(cls, user, **data):
-        client_mutation_id = data.get("client_mutation_id")
         if "client_mutation_id" in data:
             data.pop('client_mutation_id')
         if "client_mutation_label" in data:
@@ -85,7 +83,7 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
     @classmethod
     def create_policy_holder_user(cls, user, object_data):
         obj = cls._model(**object_data)
-        obj.save(username=user.username)
+        obj.save(user=user)
         return obj
 
     class Input(PolicyHolderUserInputType):
@@ -95,4 +93,3 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
     def _validate_mutation(cls, user, **data):
         super()._validate_mutation(user, **data)
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholderuser_perms)
-

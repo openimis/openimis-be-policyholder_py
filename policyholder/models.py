@@ -1,9 +1,8 @@
-import uuid
 
 from contribution_plan.models import ContributionPlanBundle
 from django.conf import settings
 from django.db import models
-from core import models as core_models, fields
+from core import models as core_models
 from graphql import ResolveInfo
 from location.models import Location, LocationManager
 from insuree.models import Insuree
@@ -128,8 +127,11 @@ class PolicyHolderUserManager(core_models.HistoryModelManager):
 
 
 class PolicyHolderUser(core_models.HistoryBusinessModel):
-    user = models.ForeignKey(core_models.User, db_column='UserID',
-                                                 on_delete=models.deletion.DO_NOTHING)
+    user = models.ForeignKey(
+        core_models.User,
+        db_column='UserID',
+        on_delete=models.deletion.DO_NOTHING
+    )
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
 
@@ -151,8 +153,11 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
 
 
 class PolicyHolderMutation(core_models.UUIDModel, core_models.ObjectMutation):
-    policy_holder = models.ForeignKey(PolicyHolder, models.DO_NOTHING,
-                                 related_name='mutations')
+    policy_holder = models.ForeignKey(
+        PolicyHolder,
+        models.DO_NOTHING,
+        related_name='mutations'
+    )
     mutation = models.ForeignKey(
         core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder')
 
@@ -162,8 +167,11 @@ class PolicyHolderMutation(core_models.UUIDModel, core_models.ObjectMutation):
 
 
 class PolicyHolderInsureeMutation(core_models.UUIDModel):
-    policy_holder_insuree = models.ForeignKey(PolicyHolderInsuree, models.DO_NOTHING,
-                                 related_name='mutations')
+    policy_holder_insuree = models.ForeignKey(
+        PolicyHolderInsuree,
+        models.DO_NOTHING,
+        related_name='mutations'
+    )
     mutation = models.ForeignKey(
         core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_insuree')
 
@@ -173,10 +181,16 @@ class PolicyHolderInsureeMutation(core_models.UUIDModel):
 
 
 class PolicyHolderContributionPlanMutation(core_models.UUIDModel):
-    policy_holder_contribution_plan = models.ForeignKey(PolicyHolderContributionPlan, models.DO_NOTHING,
-                                 related_name='mutations')
+    policy_holder_contribution_plan = models.ForeignKey(
+        PolicyHolderContributionPlan,
+        models.DO_NOTHING,
+        related_name='mutations'
+    )
     mutation = models.ForeignKey(
-        core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_contribution_plan')
+        core_models.MutationLog,
+        models.DO_NOTHING,
+        related_name='policy_holder_contribution_plan'
+    )
 
     class Meta:
         managed = True
@@ -184,8 +198,10 @@ class PolicyHolderContributionPlanMutation(core_models.UUIDModel):
 
 
 class PolicyHolderUserMutation(core_models.UUIDModel):
-    policy_holder_user = models.ForeignKey(PolicyHolderUser, models.DO_NOTHING,
-                                 related_name='mutations')
+    policy_holder_user = models.ForeignKey(
+        PolicyHolderUser, models.DO_NOTHING,
+        related_name='mutations'
+    )
     mutation = models.ForeignKey(
         core_models.MutationLog, models.DO_NOTHING, related_name='policy_holder_user')
 
@@ -195,7 +211,7 @@ class PolicyHolderUserMutation(core_models.UUIDModel):
 
 
 def has_hybrid_phu_perms(user, ph, perms):
-    if  user.has_perms(perms):
-        #TODO make cache
+    if user.has_perms(perms):
+        # TODO make cache
         return PolicyHolderUser.objects.filter(policy_holder=ph, user=user).exists()
-    return false
+    return False

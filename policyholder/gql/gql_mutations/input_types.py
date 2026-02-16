@@ -1,6 +1,6 @@
 import graphene
 
-from core.schema import OpenIMISMutation, TinyInt
+from core.schema import OpenIMISMutation
 from core.gql.gql_mutations import ReplaceInputType
 
 
