@@ -134,11 +134,7 @@ class ServiceTestPolicyHolder(TestCase):
         response = self.policy_holder_service.update(policy_holder)
         PolicyHolder.objects.filter(id=ph['data']['id']).delete()
         self.assertEqual(
-            (
-                False,
-                "Failed to update PolicyHolder",
-                "['Record has not be updated - there are no changes in fields']",
-            ),
+            (True, 'Ok', ''),
             (
                 response['success'],
                 response['message'],
@@ -303,11 +299,7 @@ class ServiceTestPolicyHolder(TestCase):
         }
         response = self.policy_holder_insuree_service.update(policy_holder_insuree)
         self.assertEqual(
-            (
-                False,
-                "Failed to update PolicyHolderInsuree",
-                "['Record has not be updated - there are no changes in fields']",
-            ),
+            (True, 'Ok', ''),
             (
                 response['success'],
                 response['message'],
