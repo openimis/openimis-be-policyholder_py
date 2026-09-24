@@ -74,7 +74,7 @@ DJANGO_PERMS = {
         # Dormant: the block's free slot 05, no reader.
         "queryAdmins": ("policyholder.view_policyholderuser_admins", 150305),
         "replace": ("policyholder.replace_policyholderuser", 150306),
-        # OFS-260: variante portail, bloc 1544xx. Mutations dormantes.
+        # OFS-260: portal variant, block 1544xx. Dormant mutations.
         "queryPortal": ("policyholder.view_policyholderuser_portal", 154401),
         "createPortal": ("policyholder.add_policyholderuser_portal", 154402),
         "updatePortal": ("policyholder.change_policyholderuser_portal", 154403),

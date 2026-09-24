@@ -334,7 +334,7 @@ class PolicyHolderPermissionDeclarationTestCase(TestCase):
                 self.assertNotEqual(
                     model.get_rights("query"), PolicyHolder.get_rights("query")
                 )
-                # une action que seule l'entite parente declare remonte au parent
+                # an action only the parent entity declares walks up to the parent
                 self.assertEqual(
                     model_rights(model, "queryPaymentPortal"),
                     PolicyHolder.get_rights("queryPaymentPortal"),
