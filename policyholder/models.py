@@ -36,6 +36,25 @@ class PolicyHolder(core_models.HistoryBusinessModel):
     objects = PolicyHolderManager()
 
     @classmethod
+    def get_rights(cls, action):
+        """
+        The rights governing an action on this entity, for GraphQL, REST and FHIR.
+
+        Redeclares nothing: the rights table is `policyholder.apps.DJANGO_PERMS`, by
+        entity then by action. The read happens inside the method and not at import
+        time, because the `_perms` keys only hold their value after `ready()`.
+
+        The `*Portal` actions (`queryPortal`, `queryPaymentPortal`,
+        `queryInsureePolicyPortal`) are distinct from their back-office counterparts:
+        they only grant the action over the policy holders the user is attached to. The
+        right alone is therefore not enough, membership is needed too - see
+        `has_hybrid_phu_perms` at the bottom of this file.
+        """
+        from policyholder.apps import configured_perms
+
+        return configured_perms("policyHolder", action)
+
+    @classmethod
     def get_queryset(cls, queryset, user):
         queryset = cls.filter_queryset(queryset)
         if isinstance(user, ResolveInfo):
@@ -68,7 +87,24 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
                                                  on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
     last_policy = models.ForeignKey(Policy, db_column='LastPolicyId', on_delete=models.deletion.DO_NOTHING, blank=True, null=True)
 
+    # Four foreign keys, a single owner: `insuree`, `contribution_plan_bundle` and
+    # `last_policy` denote shared objects this row references, while `policy_holder` is
+    # the one it is part of. The parent is declared and not inferred, precisely because
+    # nothing in the FKs distinguishes "belongs to" from "references".
+    #
+    # The entity keeps rights of its own (block 1502xx): `scope_parent` therefore only
+    # serves as a fallback for an action this entity does not declare, and above all as
+    # a declaration of ownership for the per-row check.
+    scope_parent = "policy_holder"
+
     objects = PolicyHolderInsureeManager()
+
+    @classmethod
+    def get_rights(cls, action):
+        """Access point to the rights of the `policyHolderInsuree` entity."""
+        from policyholder.apps import configured_perms
+
+        return configured_perms("policyHolderInsuree", action)
 
     @classmethod
     def get_queryset(cls, queryset, user):
@@ -100,7 +136,25 @@ class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
     contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContributionPlanBundleId',
                                                  on_delete=models.deletion.DO_NOTHING)
 
+    # Two FKs that look alike: `contribution_plan_bundle` is a catalogue shared
+    # between policy holders, `policy_holder` is the one this assignment is part of.
+    # The latter is what governs who may read or modify it.
+    scope_parent = "policy_holder"
+
     objects = PolicyHolderContributionPlanManager()
+
+    @classmethod
+    def get_rights(cls, action):
+        """
+        Access point to the rights of the `policyHolderContributionPlanBundle` entity.
+
+        The entity's name is the config's and the openIMIS catalogue's, not the
+        model's: the `_perms` keys speak of `policyholdercontributionplanbundle` for
+        reading and of `policyholdercontributionplan` for the mutations.
+        """
+        from policyholder.apps import configured_perms
+
+        return configured_perms("policyHolderContributionPlanBundle", action)
 
     @classmethod
     def get_queryset(cls, queryset, user):
@@ -135,7 +189,20 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
 
+    # Two FKs, and `policy_holder` is the one that owns the row: attaching a user to
+    # the portal means administering that policy holder, not the user - who exists
+    # independently and may be attached to several policy holders.
+    # `has_hybrid_phu_perms` below reads this same relation to decide membership.
+    scope_parent = "policy_holder"
+
     objects = PolicyHolderUserManager()
+
+    @classmethod
+    def get_rights(cls, action):
+        """Access point to the rights of the `policyHolderUser` entity."""
+        from policyholder.apps import configured_perms
+
+        return configured_perms("policyHolderUser", action)
 
     @classmethod
     def get_queryset(cls, queryset, user):
