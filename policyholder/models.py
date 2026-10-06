@@ -2,8 +2,8 @@
 from contribution_plan.models import ContributionPlanBundle
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from core import models as core_models
-from graphql import ResolveInfo
 from location.models import Location, LocationManager
 from insuree.models import Insuree
 from policy.models import Policy
@@ -55,15 +55,52 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         return configured_perms("policyHolder", action)
 
     @classmethod
+    def membership_ids(cls, user):
+        """Ids of the policy holders ``user`` is currently attached to (PolicyHolderUser)."""
+        from core import datetime
+
+        now = datetime.datetime.now()
+        return PolicyHolderUser.objects.filter(
+            Q(date_valid_to__isnull=True) | Q(date_valid_to__gte=now),
+            date_valid_from__lte=now,
+            is_deleted=False,
+            user_id=user.id,
+        ).values("policy_holder_id")
+
+    @classmethod
+    def filter_membership(cls, user, prefix=""):
+        """``Q`` objects narrowing rows to the policy holders ``user`` is attached to.
+
+        Shaped like ``filter_location``: ``prefix`` is the path from the queryset
+        being filtered to PolicyHolder, including the trailing ``__``. This is what
+        the portal rights mean - they grant an action over the user's own policy
+        holders only - so a resolver applies it whenever the user reached it
+        through a portal right rather than the back-office one.
+        """
+        user = cls.scoping_user(user)
+        if user is None or getattr(user, "is_anonymous", True):
+            return [Q(pk__in=[])]
+        return [Q(**{f"{prefix}id__in": cls.membership_ids(user)})]
+
+    @classmethod
     def get_queryset(cls, queryset, user):
+        """Policy holders in the user's districts, and the ones the user is attached to.
+
+        Membership widens the rows only; the right is still checked by every
+        caller. A portal user usually has no district at all, and sees their own
+        policy holders through the second term.
+        """
         queryset = cls.filter_queryset(queryset)
-        if isinstance(user, ResolveInfo):
-            user = user.context.user
-        if settings.ROW_SECURITY and user.is_anonymous:
+        user = cls.scoping_user(user)
+        if user is None or user.is_anonymous:
             return queryset.filter(id=None)
-        if settings.ROW_SECURITY:
-            return LocationManager().build_user_location_filter_query(user._u, queryset=queryset, prefix='locations')
-        return queryset
+        if not settings.ROW_SECURITY:
+            return queryset
+        in_districts = LocationManager().build_user_location_filter_query(user._u, prefix='locations')
+        if not in_districts:
+            # Superuser or technical user: the location filter does not apply.
+            return queryset
+        return queryset.filter(in_districts | Q(id__in=cls.membership_ids(user)))
 
     class Meta:
         db_table = 'tblPolicyHolder'
@@ -79,6 +116,9 @@ class PolicyHolderInsureeManager(core_models.HistoryModelManager):
 
 
 class PolicyHolderInsuree(core_models.HistoryBusinessModel):
+    # As visible as its policy holder (districts or membership).
+    row_scope = core_models.ParentScope("policy_holder")
+
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
     insuree = models.ForeignKey(Insuree, db_column='InsureeId',
@@ -108,14 +148,8 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
 
     @classmethod
     def get_queryset(cls, queryset, user):
-        queryset = cls.filter_queryset(queryset)
-        if isinstance(user, ResolveInfo):
-            user = user.context.user
-        if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=None)
-        if settings.ROW_SECURITY:
-            pass
-        return queryset
+        # Validity first, then `row_scope` via the mixin.
+        return super().get_queryset(cls.filter_queryset(queryset), user)
 
     class Meta:
         db_table = 'tblPolicyHolderInsuree'
@@ -131,6 +165,9 @@ class PolicyHolderContributionPlanManager(core_models.HistoryModelManager):
 
 
 class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
+    # As visible as its policy holder (districts or membership).
+    row_scope = core_models.ParentScope("policy_holder")
+
     policy_holder = models.ForeignKey(PolicyHolder, db_column='PolicyHolderId',
                                       on_delete=models.deletion.DO_NOTHING)
     contribution_plan_bundle = models.ForeignKey(ContributionPlanBundle, db_column='ContributionPlanBundleId',
@@ -158,14 +195,8 @@ class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
 
     @classmethod
     def get_queryset(cls, queryset, user):
-        queryset = cls.filter_queryset(queryset)
-        if isinstance(user, ResolveInfo):
-            user = user.context.user
-        if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=None)
-        if settings.ROW_SECURITY:
-            pass
-        return queryset
+        # Validity first, then `row_scope` via the mixin.
+        return super().get_queryset(cls.filter_queryset(queryset), user)
 
     class Meta:
         db_table = 'tblPolicyHolderContributionPlan'
@@ -181,6 +212,9 @@ class PolicyHolderUserManager(core_models.HistoryModelManager):
 
 
 class PolicyHolderUser(core_models.HistoryBusinessModel):
+    # As visible as its policy holder (districts or membership).
+    row_scope = core_models.ParentScope("policy_holder")
+
     user = models.ForeignKey(
         core_models.User,
         db_column='UserID',
@@ -206,14 +240,8 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
 
     @classmethod
     def get_queryset(cls, queryset, user):
-        queryset = cls.filter_queryset(queryset)
-        if isinstance(user, ResolveInfo):
-            user = user.context.user
-        if settings.ROW_SECURITY and user.is_anonymous:
-            return queryset.filter(id=None)
-        if settings.ROW_SECURITY:
-            pass
-        return queryset
+        # Validity first, then `row_scope` via the mixin.
+        return super().get_queryset(cls.filter_queryset(queryset), user)
 
     class Meta:
         db_table = 'tblPolicyHolderUser'

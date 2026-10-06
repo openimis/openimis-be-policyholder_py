@@ -37,6 +37,18 @@ It is dedicated to be deployed as a module of [openimis-be_py](https://github.co
 * PolicyHolderContributionPlanBundle - CRUD services, replacePoicyHolderContributionPlanBundle
 * PolicyHolderUser - CRUD services, replacePolicyHolderUser
 
+## Row security
+
+`PolicyHolder.get_queryset` is the one rule: a user sees the policy holders in
+their districts, and the ones they are currently attached to through
+`PolicyHolderUser`. `PolicyHolderInsuree`, `PolicyHolderContributionPlan` and
+`PolicyHolderUser` declare `ParentScope("policy_holder")` and follow it.
+
+Each query takes either its back-office right or its portal right (`*_portal_perms`).
+The portal right is narrower: it reads only the policy holders the user is attached
+to, whatever their districts. `PolicyHolder.filter_membership(user, prefix=...)`
+returns that restriction as `Q` objects, for other modules' portal queries.
+
 ## Configuration options (can be changed via core.ModuleConfiguration)
 * gql_query_policyholder_perms: required rights to call policy_holder GraphQL Query (default: ["150101"])
 * gql_query_policyholder_admins_perms: required rights to call policy_holder_admin GraphQL Query (default: [])

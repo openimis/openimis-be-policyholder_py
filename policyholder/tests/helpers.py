@@ -4,7 +4,7 @@ from insuree.test_helpers import create_test_insuree
 from location.models import Location
 from policy.test_helpers import create_test_policy
 
-from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser
+from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderUser, PolicyHolderContributionPlan
 
 from product.test_helpers import create_test_product
 
@@ -83,6 +83,27 @@ def create_test_policy_holder_user(user=None, policy_holder=None, custom_props={
     policy_holder_user.save(user=user)
 
     return policy_holder_user
+
+
+def create_test_policy_holder_contribution_plan(policy_holder=None, contribution_plan_bundle=None, custom_props={}):
+    if not policy_holder:
+        policy_holder = create_test_policy_holder()
+    if not contribution_plan_bundle:
+        contribution_plan_bundle = create_test_contribution_plan_bundle()
+
+    user = __get_or_create_simple_policy_holder_user()
+
+    object_data = {
+        'policy_holder': policy_holder,
+        'contribution_plan_bundle': contribution_plan_bundle,
+        'json_ext': {},
+        **custom_props
+    }
+
+    policy_holder_contribution_plan = PolicyHolderContributionPlan(**object_data)
+    policy_holder_contribution_plan.save(user=user)
+
+    return policy_holder_contribution_plan
 
 
 def __get_or_create_simple_policy_holder_user():

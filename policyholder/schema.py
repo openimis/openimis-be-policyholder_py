@@ -30,6 +30,20 @@ from payment.signals import signal_before_payment_query
 from .signals import append_policy_holder_filter
 
 
+def _portal_filters(user, perms, portal_perms, prefix=""):
+    """Check the back-office or portal right, and return the filters the portal one implies.
+
+    The back-office right reads every row the model's row security allows. The
+    portal right is narrower: it reads only the policy holders the user is
+    attached to, whatever their districts.
+    """
+    if user.has_perms(perms):
+        return []
+    if user.has_perms(portal_perms):
+        return PolicyHolder.filter_membership(user, prefix=prefix)
+    raise PermissionDenied(_("unauthorized"))
+
+
 class Query(graphene.ObjectType):
     policy_holder = OrderedDjangoFilterConnectionField(
         PolicyHolderGQLType,
@@ -78,32 +92,11 @@ class Query(graphene.ObjectType):
         return False if errors else True
 
     def resolve_policy_holder(self, info, **kwargs):
-        filters = []
-        # go to process additional filter only when this arg of filter was passed into query
-        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_perms):
-            # then check perms
-            if info.context.user.has_perms(PolicyholderConfig.gql_query_policyholder_portal_perms):
-                # check if user is linked to ph in policy holder user table
-                if info.context.user.i_user_id:
-                    from core import datetime
-                    now = datetime.datetime.now()
-                    uuids = PolicyHolderUser.objects.filter(
-                        Q(date_valid_to__isnull=True) | Q(date_valid_to__gte=now),
-                        is_deleted=False,
-                        user_id=info.context.user.id,
-                        date_valid_from__lte=now,
-                    ).values_list('policy_holder', flat=True).distinct()
-
-                    if uuids:
-                        filters.append(Q(id__in=uuids))
-                    else:
-                        raise PermissionDenied(_("unauthorized"))
-                else:
-                    raise PermissionDenied(_("unauthorized"))
-            else:
-                raise PermissionDenied(_("unauthorized"))
-
-        # if there is a filter it means that there is restricted permission found by a signal
+        filters = _portal_filters(
+            info.context.user,
+            PolicyholderConfig.gql_query_policyholder_perms,
+            PolicyholderConfig.gql_query_policyholder_portal_perms,
+        )
 
         filters += append_validity_filter(**kwargs)
 
@@ -119,32 +112,37 @@ class Query(graphene.ObjectType):
         return gql_optimizer.query(PolicyHolder.objects.filter(*filters).all(), info)
 
     def resolve_policy_holder_insuree(self, info, **kwargs):
-        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_perms):
-            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderinsuree_portal_perms):
-                raise PermissionError("Unauthorized")
-
-        filters = append_validity_filter(**kwargs)
-        query = PolicyHolderInsuree.objects
-        return gql_optimizer.query(query.filter(*filters).all(), info)
+        filters = _portal_filters(
+            info.context.user,
+            PolicyholderConfig.gql_query_policyholderinsuree_perms,
+            PolicyholderConfig.gql_query_policyholderinsuree_portal_perms,
+            prefix="policy_holder__",
+        )
+        filters += append_validity_filter(**kwargs)
+        query = PolicyHolderInsuree.get_queryset(PolicyHolderInsuree.objects.all(), info)
+        return gql_optimizer.query(query.filter(*filters), info)
 
     def resolve_policy_holder_user(self, info, **kwargs):
-        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_perms):
-            if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholderuser_portal_perms):
-                raise PermissionError("Unauthorized")
-
-        filters = append_validity_filter(**kwargs)
-        query = PolicyHolderUser.objects
-        return gql_optimizer.query(query.filter(*filters).all(), info)
+        filters = _portal_filters(
+            info.context.user,
+            PolicyholderConfig.gql_query_policyholderuser_perms,
+            PolicyholderConfig.gql_query_policyholderuser_portal_perms,
+            prefix="policy_holder__",
+        )
+        filters += append_validity_filter(**kwargs)
+        query = PolicyHolderUser.get_queryset(PolicyHolderUser.objects.all(), info)
+        return gql_optimizer.query(query.filter(*filters), info)
 
     def resolve_policy_holder_contribution_plan_bundle(self, info, **kwargs):
-        if not info.context.user.has_perms(PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms):
-            if not info.context.user.has_perms(
-                    PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms):
-                raise PermissionError("Unauthorized")
-
-        filters = append_validity_filter(**kwargs)
-        query = PolicyHolderContributionPlan.objects
-        return gql_optimizer.query(query.filter(*filters).all(), info)
+        filters = _portal_filters(
+            info.context.user,
+            PolicyholderConfig.gql_query_policyholdercontributionplanbundle_perms,
+            PolicyholderConfig.gql_query_policyholdercontributionplanbundle_portal_perms,
+            prefix="policy_holder__",
+        )
+        filters += append_validity_filter(**kwargs)
+        query = PolicyHolderContributionPlan.get_queryset(PolicyHolderContributionPlan.objects.all(), info)
+        return gql_optimizer.query(query.filter(*filters), info)
 
 
 class Mutation(graphene.ObjectType):
