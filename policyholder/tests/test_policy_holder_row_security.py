@@ -14,6 +14,9 @@ from core.models.openimis_graphql_test_case import openIMISGraphQLTestCase, Base
 from core.test_helpers import create_right_only_user
 from location.models import Location
 from location.test_helpers import create_basic_test_locations
+from policyholder.gql.gql_mutations.delete_mutations import DeletePolicyHolderInsureeMutation
+from policyholder.gql.gql_mutations.update_mutations import UpdatePolicyHolderInsureeMutation
+from policyholder.models import PolicyHolderInsuree
 from policyholder.tests.helpers import (
     create_test_policy_holder,
     create_test_policy_holder_contribution_plan,
@@ -45,8 +48,9 @@ PORTAL_PERMS = [
 ]
 
 
-@override_settings(ROW_SECURITY=True)
-class PolicyHolderRowSecurityTests(openIMISGraphQLTestCase):
+class PolicyHolderScopeTestCase(openIMISGraphQLTestCase):
+    """Two policy holders in two districts, and the users looking at them."""
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -55,11 +59,20 @@ class PolicyHolderRowSecurityTests(openIMISGraphQLTestCase):
         district_b = Location.objects.get(code="R2D1", validity_to__isnull=True)
         ph_a = create_test_policy_holder(custom_props={"code": "C7-PH-A", "locations": district_a})
         ph_b = create_test_policy_holder(custom_props={"code": "C7-PH-B", "locations": district_b})
-        for ph in (ph_a, ph_b):
-            create_test_policy_holder_insuree(policy_holder=ph)
+        cls.links = {}
+        for key, ph in (("a", ph_a), ("b", ph_b)):
+            cls.links[key] = create_test_policy_holder_insuree(policy_holder=ph)
             create_test_policy_holder_contribution_plan(policy_holder=ph)
 
         cls.staff_a = create_right_only_user("c7staffa", BACK_OFFICE_PERMS, district_codes=["R1D1"])
+        cls.writer_a = create_right_only_user(
+            "c7writera",
+            [
+                "gql_mutation_update_policyholderinsuree_perms",
+                "gql_mutation_delete_policyholderinsuree_perms",
+            ],
+            district_codes=["R1D1"],
+        )
         cls.staff_member = create_right_only_user("c7staffm", BACK_OFFICE_PERMS, district_codes=["R1D1"])
         # Portal accounts have no district: what they see comes from membership.
         cls.portal_a = create_right_only_user("c7portala", PORTAL_PERMS)
@@ -81,6 +94,9 @@ class PolicyHolderRowSecurityTests(openIMISGraphQLTestCase):
         codes = {n["code"] if "code" in n else n["policyHolder"]["code"] for n in nodes}
         return codes & CODES
 
+
+@override_settings(ROW_SECURITY=True)
+class PolicyHolderRowSecurityTests(PolicyHolderScopeTestCase):
     def test_portal_user_sees_only_own_policy_holder(self):
         for field in QUERIES:
             self.assertEqual(self._codes(self.portal_a, field), {"C7-PH-A"}, field)
@@ -100,3 +116,28 @@ class PolicyHolderRowSecurityTests(openIMISGraphQLTestCase):
     def test_refused_without_right(self):
         for field in QUERIES:
             self.assertTrue(self._gql(self.no_right, field).get("errors"), field)
+
+
+@override_settings(ROW_SECURITY=True)
+class PolicyHolderWriteRowSecurityTests(PolicyHolderScopeTestCase):
+    """Writes go through the shared mutation mixins, which look targets up scoped (H21)."""
+
+    def _is_deleted(self, key):
+        return PolicyHolderInsuree.objects.get(id=self.links[key].id).is_deleted
+
+    def test_delete_refuses_foreign_link(self):
+        errors = DeletePolicyHolderInsureeMutation.async_mutate(self.writer_a, uuids=[self.links["b"].id])
+        self.assertTrue(errors)
+        self.assertFalse(self._is_deleted("b"))
+
+    def test_delete_own_link(self):
+        errors = DeletePolicyHolderInsureeMutation.async_mutate(self.writer_a, uuids=[self.links["a"].id])
+        self.assertIsNone(errors)
+        self.assertTrue(self._is_deleted("a"))
+
+    def test_update_refuses_foreign_link(self):
+        errors = UpdatePolicyHolderInsureeMutation.async_mutate(
+            self.writer_a, id=self.links["b"].id, json_ext={"h21": True}
+        )
+        self.assertTrue(errors)
+        self.assertNotIn("h21", PolicyHolderInsuree.objects.get(id=self.links["b"].id).json_ext or {})

@@ -45,7 +45,7 @@ class ReplacePolicyHolderUserMutation(BaseHistoryModelReplaceMutationMixin, Base
             data.pop('client_mutation_id')
         if "client_mutation_label" in data:
             data.pop('client_mutation_label')
-        object_to_replace = cls._model.objects.filter(id=data['uuid']).first()
+        object_to_replace = cls._target_queryset(user).filter(id=data['uuid']).first()
         if object_to_replace is None:
             cls._object_not_exist_exception(data['uuid'])
         else:
