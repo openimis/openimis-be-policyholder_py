@@ -1,4 +1,6 @@
 
+import datetime as py_datetime
+
 from contribution_plan.models import ContributionPlanBundle
 from django.conf import settings
 from django.db import models
@@ -57,9 +59,9 @@ class PolicyHolder(core_models.HistoryBusinessModel):
     @classmethod
     def membership_ids(cls, user):
         """Ids of the policy holders ``user`` is currently attached to (PolicyHolderUser)."""
-        from core import datetime
-
-        now = datetime.datetime.now()
+        # The standard library datetime, not core's calendar-aware one: Django's
+        # date fields reject the latter when the calendar is not Gregorian.
+        now = py_datetime.datetime.now()
         return PolicyHolderUser.objects.filter(
             Q(date_valid_to__isnull=True) | Q(date_valid_to__gte=now),
             date_valid_from__lte=now,
