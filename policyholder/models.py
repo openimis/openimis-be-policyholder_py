@@ -92,7 +92,11 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         caller. A portal user usually has no district at all, and sees their own
         policy holders through the second term.
         """
-        queryset = cls.filter_queryset(queryset)
+        # Row security only: whether deleted rows are in scope is decided by the
+        # resolvers through append_validity_filter, which sees the isDeleted
+        # argument this method never gets (follow-up of OP-3180).
+        if queryset is None:
+            queryset = cls.objects.all()
         user = cls.scoping_user(user)
         if user is None or user.is_anonymous:
             return queryset.filter(id=None)
@@ -148,11 +152,6 @@ class PolicyHolderInsuree(core_models.HistoryBusinessModel):
 
         return configured_perms("policyHolderInsuree", action)
 
-    @classmethod
-    def get_queryset(cls, queryset, user):
-        # Validity first, then `row_scope` via the mixin.
-        return super().get_queryset(cls.filter_queryset(queryset), user)
-
     class Meta:
         db_table = 'tblPolicyHolderInsuree'
 
@@ -195,11 +194,6 @@ class PolicyHolderContributionPlan(core_models.HistoryBusinessModel):
 
         return configured_perms("policyHolderContributionPlanBundle", action)
 
-    @classmethod
-    def get_queryset(cls, queryset, user):
-        # Validity first, then `row_scope` via the mixin.
-        return super().get_queryset(cls.filter_queryset(queryset), user)
-
     class Meta:
         db_table = 'tblPolicyHolderContributionPlan'
 
@@ -239,11 +233,6 @@ class PolicyHolderUser(core_models.HistoryBusinessModel):
         from policyholder.apps import configured_perms
 
         return configured_perms("policyHolderUser", action)
-
-    @classmethod
-    def get_queryset(cls, queryset, user):
-        # Validity first, then `row_scope` via the mixin.
-        return super().get_queryset(cls.filter_queryset(queryset), user)
 
     class Meta:
         db_table = 'tblPolicyHolderUser'
