@@ -3,9 +3,10 @@ from core.gql.gql_mutations.base_mutation import BaseDeleteMutation, BaseHistory
 from policyholder.apps import PolicyholderConfig
 from policyholder.models import PolicyHolder, PolicyHolderInsuree, PolicyHolderContributionPlan, PolicyHolderUser
 from policyholder.validation.permission_validation import PermissionValidation
+from policyholder.gql.gql_mutations import LiveTargetMixin
 
 
-class DeletePolicyHolderMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
+class DeletePolicyHolderMutation(LiveTargetMixin, BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolder
@@ -19,7 +20,7 @@ class DeletePolicyHolderMutation(BaseHistoryModelDeleteMutationMixin, BaseDelete
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_delete_policyholder_perms)
 
 
-class DeletePolicyHolderInsureeMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
+class DeletePolicyHolderInsureeMutation(LiveTargetMixin, BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderInsuree
@@ -33,7 +34,9 @@ class DeletePolicyHolderInsureeMutation(BaseHistoryModelDeleteMutationMixin, Bas
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_delete_policyholderinsuree_perms)
 
 
-class DeletePolicyHolderContributionPlanMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
+class DeletePolicyHolderContributionPlanMutation(
+        LiveTargetMixin, BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation
+):
     _mutation_class = "PolicyHolderContributionPlanMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderContributionPlan
@@ -47,7 +50,7 @@ class DeletePolicyHolderContributionPlanMutation(BaseHistoryModelDeleteMutationM
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_delete_policyholdercontributionplan_perms)
 
 
-class DeletePolicyHolderUserMutation(BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
+class DeletePolicyHolderUserMutation(LiveTargetMixin, BaseHistoryModelDeleteMutationMixin, BaseDeleteMutation):
     _mutation_class = "PolicyHolderUserMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderUser

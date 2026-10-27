@@ -5,9 +5,10 @@ from policyholder.gql.gql_mutations import PolicyHolderInsureeUpdateInputType, \
     PolicyHolderContributionPlanUpdateInputType, PolicyHolderUserUpdateInputType, PolicyHolderUpdateInputType
 from policyholder.validation import PolicyHolderValidation
 from policyholder.validation.permission_validation import PermissionValidation
+from policyholder.gql.gql_mutations import LiveTargetMixin
 
 
-class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
+class UpdatePolicyHolderMutation(LiveTargetMixin, BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolder
@@ -22,7 +23,7 @@ class UpdatePolicyHolderMutation(BaseHistoryModelUpdateMutationMixin, BaseMutati
         PolicyHolderValidation.validate_update(user, **data)
 
 
-class UpdatePolicyHolderInsureeMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
+class UpdatePolicyHolderInsureeMutation(LiveTargetMixin, BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderInsureeMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderInsuree
@@ -36,7 +37,7 @@ class UpdatePolicyHolderInsureeMutation(BaseHistoryModelUpdateMutationMixin, Bas
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholderinsuree_perms)
 
 
-class UpdatePolicyHolderContributionPlanMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
+class UpdatePolicyHolderContributionPlanMutation(LiveTargetMixin, BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderContributionPlanMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderContributionPlan
@@ -50,7 +51,7 @@ class UpdatePolicyHolderContributionPlanMutation(BaseHistoryModelUpdateMutationM
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_update_policyholdercontributionplan_perms)
 
 
-class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMutation):
+class UpdatePolicyHolderUserMutation(LiveTargetMixin, BaseHistoryModelUpdateMutationMixin, BaseMutation):
     _mutation_class = "PolicyHolderUserMutation"
     _mutation_module = "policyholder"
     _model = PolicyHolderUser
@@ -62,6 +63,8 @@ class UpdatePolicyHolderUserMutation(BaseHistoryModelUpdateMutationMixin, BaseMu
         if "client_mutation_label" in data:
             data.pop('client_mutation_label')
         updated_object = cls._target_queryset(user).filter(id=data['id']).first()
+        if updated_object is None:
+            cls._object_not_exist_exception(obj_uuid=data['id'])
         [setattr(updated_object, key, data[key]) for key in data]
         cls.update_policy_holder_user(user=user, object_to_update=updated_object)
 
