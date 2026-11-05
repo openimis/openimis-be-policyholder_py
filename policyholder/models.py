@@ -85,13 +85,14 @@ class PolicyHolder(core_models.HistoryBusinessModel):
         return [Q(**{f"{prefix}id__in": cls.membership_ids(user)})]
 
     @classmethod
-    def get_queryset(cls, queryset, user):
+    def get_queryset(cls, queryset, user, *, validity=None, audits=None):
         """Policy holders in the user's districts, and the ones the user is attached to.
 
         Membership widens the rows only; the right is still checked by every
         caller. A portal user usually has no district at all, and sees their own
         policy holders through the second term.
         """
+        queryset = cls.apply_row_filters(queryset, validity, audits)
         # Row security only: whether deleted rows are in scope is decided by the
         # resolvers through append_validity_filter, which sees the isDeleted
         # argument this method never gets (follow-up of OP-3180).
