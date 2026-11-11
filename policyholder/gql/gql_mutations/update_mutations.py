@@ -65,6 +65,13 @@ class UpdatePolicyHolderUserMutation(LiveTargetMixin, BaseHistoryModelUpdateMuta
         updated_object = cls._target_queryset(user).filter(id=data['id']).first()
         if updated_object is None:
             cls._object_not_exist_exception(obj_uuid=data['id'])
+        # The frontend sends user and policy holder on every update, so they stay
+        # editable; the link they produce is checked as a creation would be.
+        PermissionValidation.validate_policy_holder_user_link(
+            user,
+            data.get("policy_holder_id") or updated_object.policy_holder_id,
+            data.get("user_id") or updated_object.user_id,
+        )
         [setattr(updated_object, key, data[key]) for key in data]
         cls.update_policy_holder_user(user=user, object_to_update=updated_object)
 

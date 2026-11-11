@@ -52,6 +52,12 @@ class ReplacePolicyHolderUserMutation(LiveTargetMixin, BaseHistoryModelReplaceMu
         if object_to_replace is None:
             cls._object_not_exist_exception(data['uuid'])
         else:
+            # The replacement is a new link: checked as a creation would be.
+            PermissionValidation.validate_policy_holder_user_link(
+                user,
+                data.get("policy_holder_id") or object_to_replace.policy_holder_id,
+                data.get("user_id") or object_to_replace.user_id,
+            )
             object_to_replace.replace_object(data=data, username=user.username)
 
     class Input(PolicyHolderUserReplaceInputType):
