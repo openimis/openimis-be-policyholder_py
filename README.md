@@ -49,6 +49,10 @@ The portal right is narrower: it reads only the policy holders the user is attac
 to, whatever their districts. `PolicyHolder.filter_membership(user, prefix=...)`
 returns that restriction as `Q` objects, for other modules' portal queries.
 
+Because a `PolicyHolderUser` widens what its user reads, the create, update and
+replace mutations of that link also require the policy holder to be in the caller's
+scope, and refuse a link to the caller themselves unless the caller is a superuser.
+
 ## Configuration options (can be changed via core.ModuleConfiguration)
 * gql_query_policyholder_perms: required rights to call policy_holder GraphQL Query (default: ["150101"])
 * gql_query_policyholder_admins_perms: required rights to call policy_holder_admin GraphQL Query (default: [])

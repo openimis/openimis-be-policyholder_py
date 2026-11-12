@@ -93,3 +93,6 @@ class CreatePolicyHolderUserMutation(BaseHistoryModelCreateMutationMixin, BaseMu
     def _validate_mutation(cls, user, **data):
         super()._validate_mutation(user, **data)
         PermissionValidation.validate_perms(user, PolicyholderConfig.gql_mutation_create_policyholderuser_perms)
+        PermissionValidation.validate_policy_holder_user_link(
+            user, data.get("policy_holder_id"), data.get("user_id")
+        )
