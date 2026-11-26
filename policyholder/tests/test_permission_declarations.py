@@ -18,10 +18,9 @@ distinct identifiers, and the test below checks that no identifier is shared bet
 the two - conflating them would amount to giving the portal the back office's scope.
 """
 
-import json
-import os
-
 from django.test import TestCase
+
+from core.utils import build_permissions_map
 
 from policyholder.apps import (
     DJANGO_PERMS,
@@ -170,21 +169,6 @@ SUB_RESOURCES = {
 }
 
 
-def _permissions_map():
-    """`permissions_map.json` lives in the assembly, not in the package."""
-    from django.conf import settings
-
-    candidates = [
-        os.path.join(str(settings.BASE_DIR), "permissions_map.json"),
-        os.path.join(os.path.dirname(str(settings.BASE_DIR)), "permissions_map.json"),
-    ]
-    for path in candidates:
-        if os.path.exists(path):
-            with open(path) as handle:
-                return json.load(handle)
-    return None
-
-
 class PolicyHolderPermissionDeclarationTestCase(TestCase):
     def test_right_ids_unchanged(self):
         self.assertEqual(
@@ -278,9 +262,7 @@ class PolicyHolderPermissionDeclarationTestCase(TestCase):
                 self.assertEqual(getattr(PolicyholderConfig, key), EXPECTED_RIGHTS[key])
 
     def test_ids_match_permissions_map(self):
-        mapping = _permissions_map()
-        if mapping is None:
-            self.skipTest("permissions_map.json absent de cet assemblage")
+        mapping = build_permissions_map()
         actual = {name: mapping.get(name) for name in EXPECTED_MAP_ENTRIES}
         self.assertEqual(actual, EXPECTED_MAP_ENTRIES)
 
